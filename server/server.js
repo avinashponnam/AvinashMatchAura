@@ -1738,16 +1738,16 @@ async function startServer() {
 
 
         server.listen(
-            3000,
-            () => {
+    process.env.PORT || 3000,
+    "0.0.0.0",
+    () => {
 
-                console.log(
-                    "Avinash Match Aura running on http://localhost:3000"
-                );
-
-            }
+        console.log(
+            `Avinash Match Aura running on port ${process.env.PORT || 3000}`
         );
 
+    }
+);
 
     }
 
