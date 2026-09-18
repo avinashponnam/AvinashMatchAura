@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Avinash Match Aura</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+                );
+
+            padding: 20px;
+        }
+
+        .container {
+
+            width: 100%;
+
+            max-width: 420px;
+
+            background: white;
+
+            padding: 40px 35px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(0, 0, 0, 0.25);
+
+            text-align: center;
+        }
+
+        .logo {
+
+            font-size: 50px;
+
+            margin-bottom: 10px;
+        }
+
+        h1 {
+
+            color: #5b4bb7;
+
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+
+            color: #777;
+
+            margin-bottom: 30px;
+
+            font-size: 15px;
+        }
+
+        .input-group {
+
+            text-align: left;
+
+            margin-bottom: 20px;
+        }
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-weight: bold;
+
+            color: #444;
+        }
+
+        input {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.3s;
+        }
+
+        input:focus {
+
+            border-color: #667eea;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(102, 126, 234, 0.15);
+        }
+
+        .password-box {
+
+            position: relative;
+        }
+
+        .password-box input {
+
+            padding-right: 65px;
+        }
+
+        .show-password {
+
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color: #667eea;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .login-btn {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+                );
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+            margin-top: 5px;
+        }
+
+        .login-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(102, 126, 234, 0.35);
+        }
+
+        .login-btn:disabled {
+
+            opacity: 0.7;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+        #message {
+
+            margin-top: 18px;
+
+            min-height: 22px;
+
+            font-weight: bold;
+        }
+
+        .register-link {
+
+            margin-top: 25px;
+
+            color: #666;
+
+            font-size: 14px;
+        }
+
+        .register-link a {
+
+            color: #667eea;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+
+            .container {
+
+                padding:
+                    30px 22px;
+            }
+
+            h1 {
+
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="logo">
+        💫
+    </div>
+
+
+    <h1>
+        Avinash Match Aura
+    </h1>
+
+
+    <p class="subtitle">
+        Connect. Chat. Meet Someone New.
+    </p>
+
+
+    <form id="loginForm">
+
+
+        <div class="input-group">
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="password">
+                Password
+            </label>
+
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+
+                <button
+                    type="button"
+                    class="show-password"
+                    id="togglePassword">
+
+                    Show
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="login-btn"
+            id="loginButton">
+
+            Login
+
+        </button>
+
+
+    </form>
+
+
+    <p id="message"></p>
+
+
+    <div class="register-link">
+
+        Don't have an account?
+
+        <a href="/register.html">
+            Create Account
+        </a>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================
+   ELEMENTS
+===================================== */
+
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
+
+
+const emailInput =
+    document.getElementById(
+        "email"
+    );
+
+
+const passwordInput =
+    document.getElementById(
+        "password"
+    );
+
+
+const loginButton =
+    document.getElementById(
+        "loginButton"
+    );
+
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+
+const togglePassword =
+    document.getElementById(
+        "togglePassword"
+    );
+
+
+
+/* =====================================
+   SHOW / HIDE PASSWORD
+===================================== */
+
+togglePassword.addEventListener(
+    "click",
+    function () {
+
+        if (
+            passwordInput.type ===
+            "password"
+        ) {
+
+            passwordInput.type =
+                "text";
+
+            togglePassword.textContent =
+                "Hide";
+
+        }
+
+        else {
+
+            passwordInput.type =
+                "password";
+
+            togglePassword.textContent =
+                "Show";
+
+        }
+
+    }
+);
+
+
+
+/* =====================================
+   LOGIN
+===================================== */
+
+loginForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const email =
+            emailInput.value.trim();
+
+
+        const password =
+            passwordInput.value;
+
+
+        message.textContent =
+            "";
+
+
+        loginButton.disabled =
+            true;
+
+
+        loginButton.textContent =
+            "Logging in...";
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "/login",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                email:
+                                    email,
+
+                                password:
+                                    password
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+
+            /* ==========================
+               LOGIN SUCCESS
+            ========================== */
+
+            if (response.ok) {
+
+
+                message.textContent =
+                    data.message ||
+                    "Login successful!";
+
+
+                message.style.color =
+                    "green";
+
+
+                /*
+                 * IMPORTANT FIX
+                 *
+                 * Save the logged-in
+                 * username/email.
+                 *
+                 * chat.html reads:
+                 *
+                 * localStorage.getItem("username")
+                 */
+
+                localStorage.setItem(
+                    "username",
+                    data.username || email
+                );
+
+
+                /*
+                 * Also save email separately.
+                 */
+
+                localStorage.setItem(
+                    "email",
+                    email
+                );
+
+
+                /*
+                 * Redirect to chat.
+                 */
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "/chat.html";
+
+                    },
+                    1000
+                );
+
+
+            }
+
+
+            /* ==========================
+               LOGIN FAILED
+            ========================== */
+
+            else {
+
+
+                message.textContent =
+                    data.message ||
+                    "Invalid email or password.";
+
+
+                message.style.color =
+                    "red";
+
+
+                loginButton.disabled =
+                    false;
+
+
+                loginButton.textContent =
+                    "Login";
+
+            }
+
+
+        }
+
+
+        /* ==========================
+           SERVER ERROR
+        ========================== */
+
+        catch (error) {
+
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+
+            message.textContent =
+                "Server connection failed.";
+
+
+            message.style.color =
+                "red";
+
+
+            loginButton.disabled =
+                false;
+
+
+            loginButton.textContent =
+                "Login";
+
+        }
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

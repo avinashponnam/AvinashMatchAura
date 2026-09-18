@@ -1,0 +1,26 @@
+{
+  "name": "avinash-match-aura-server",
+  "version": "1.0.0",
+  "description": "Real-time anonymous stranger chat",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "chat",
+    "stranger-chat",
+    "socket.io",
+    "express"
+  ],
+  "author": "Avinash",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.18.0",
+    "socket.io": "^4.8.3"
+  }
+}

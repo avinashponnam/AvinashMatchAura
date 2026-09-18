@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile - Avinash Match Aura</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family:
+                Inter,
+                Arial,
+                sans-serif;
+        }
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 25px;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(139,92,246,.35),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(236,72,153,.28),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #090617,
+                    #1b0b35,
+                    #090617
+                );
+
+            overflow-y: auto;
+        }
+
+
+        /* =========================
+           MAIN CARD
+        ========================= */
+
+        .container {
+
+            width: 100%;
+
+            max-width: 620px;
+
+            padding: 38px;
+
+            border-radius: 28px;
+
+            background:
+                rgba(255,255,255,.075);
+
+            border:
+                1px solid
+                rgba(255,255,255,.13);
+
+            backdrop-filter:
+                blur(30px);
+
+            -webkit-backdrop-filter:
+                blur(30px);
+
+            box-shadow:
+                0 30px 90px
+                rgba(0,0,0,.5);
+
+            color: white;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        .container::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+
+            height: 220px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(139,92,246,.16);
+
+            filter: blur(60px);
+
+            top: -100px;
+
+            right: -80px;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .logo {
+
+            width: 72px;
+
+            height: 72px;
+
+            margin:
+                0 auto 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 22px;
+
+            font-size: 38px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #8b5cf6,
+                    #ec4899
+                );
+
+            box-shadow:
+                0 12px 35px
+                rgba(139,92,246,.4);
+
+            animation:
+                logoFloat 3s ease-in-out infinite;
+        }
+
+
+        @keyframes logoFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+
+        }
+
+
+        h1 {
+
+            text-align: center;
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffffff,
+                    #ddd6fe,
+                    #f9a8d4
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color:
+                transparent;
+
+            margin-bottom: 8px;
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color:
+                rgba(255,255,255,.55);
+
+            font-size: 14px;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .field {
+
+            margin-bottom: 20px;
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color:
+                rgba(255,255,255,.86);
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .field-hint {
+
+            font-size: 11px;
+
+            color:
+                rgba(255,255,255,.38);
+
+            margin-top: 5px;
+        }
+
+
+        input,
+        select,
+        textarea {
+
+            width: 100%;
+
+            padding: 14px 15px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.12);
+
+            border-radius: 14px;
+
+            outline: none;
+
+            background:
+                rgba(255,255,255,.055);
+
+            color: white;
+
+            font-size: 14px;
+
+            transition:
+                .25s ease;
+        }
+
+
+        input::placeholder,
+        textarea::placeholder {
+
+            color:
+                rgba(255,255,255,.3);
+        }
+
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+
+            border-color:
+                rgba(167,139,250,.7);
+
+            background:
+                rgba(255,255,255,.08);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(139,92,246,.1);
+        }
+
+
+        select option {
+
+            background:
+                #1b1233;
+
+            color: white;
+        }
+
+
+        textarea {
+
+            min-height: 110px;
+
+            resize: vertical;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================
+           INTERESTS
+        ========================= */
+
+        .interest-title {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 10px;
+        }
+
+
+        .selected-count {
+
+            color:
+                #c4b5fd;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        .interest-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 9px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .interest {
+
+            position: relative;
+        }
+
+
+        .interest input {
+
+            position: absolute;
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
+
+        .interest label {
+
+            margin: 0;
+
+            min-height: 48px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 7px;
+
+            border-radius: 13px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.1);
+
+            background:
+                rgba(255,255,255,.045);
+
+            color:
+                rgba(255,255,255,.7);
+
+            cursor: pointer;
+
+            font-size: 11px;
+
+            transition:
+                .22s ease;
+        }
+
+
+        .interest label:hover {
+
+            background:
+                rgba(139,92,246,.12);
+
+            transform:
+                translateY(-2px);
+        }
+
+
+        .interest input:checked + label {
+
+            color: white;
+
+            border-color:
+                rgba(167,139,250,.7);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(124,58,237,.7),
+                    rgba(192,38,211,.65)
+                );
+
+            box-shadow:
+                0 7px 20px
+                rgba(139,92,246,.2);
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        /* =========================
+           CUSTOM INTEREST
+        ========================= */
+
+        .custom-interest {
+
+            display: flex;
+
+            gap: 8px;
+        }
+
+
+        .custom-interest input {
+
+            flex: 1;
+        }
+
+
+        .add-interest {
+
+            padding:
+                0 15px;
+
+            border: none;
+
+            border-radius: 13px;
+
+            color: white;
+
+            background:
+                rgba(139,92,246,.3);
+
+            border:
+                1px solid
+                rgba(167,139,250,.25);
+
+            cursor: pointer;
+
+            font-weight: 700;
+
+            transition: .2s;
+        }
+
+
+        .add-interest:hover {
+
+            background:
+                rgba(139,92,246,.5);
+        }
+
+
+        .custom-tags {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 7px;
+
+            margin-top: 10px;
+        }
+
+
+        .custom-tag {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding:
+                6px 9px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(236,72,153,.13);
+
+            border:
+                1px solid
+                rgba(236,72,153,.25);
+
+            color:
+                #fbcfe8;
+
+            font-size: 10px;
+        }
+
+
+        .remove-tag {
+
+            border: none;
+
+            background: none;
+
+            color:
+                #f9a8d4;
+
+            cursor: pointer;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           SAVE BUTTON
+        ========================= */
+
+        .save-btn {
+
+            width: 100%;
+
+            padding: 15px;
+
+            margin-top: 5px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #ec4899
+                );
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 30px
+                rgba(139,92,246,.3);
+
+            transition:
+                .25s ease;
+        }
+
+
+        .save-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 14px 35px
+                rgba(139,92,246,.42);
+        }
+
+
+        .save-btn:disabled {
+
+            opacity: .65;
+
+            cursor:
+                not-allowed;
+
+            transform: none;
+        }
+
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        #message {
+
+            text-align: center;
+
+            margin-top: 16px;
+
+            min-height: 22px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================
+           BACK
+        ========================= */
+
+        .back {
+
+            text-align: center;
+
+            margin-top: 22px;
+        }
+
+
+        .back a {
+
+            color:
+                #c4b5fd;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            transition: .2s;
+        }
+
+
+        .back a:hover {
+
+            color: white;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 12px;
+            }
+
+
+            .container {
+
+                padding:
+                    28px 20px;
+
+                border-radius: 22px;
+            }
+
+
+            h1 {
+
+                font-size: 25px;
+            }
+
+
+            .interest-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 360px) {
+
+            .interest-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="logo">
+        💫
+    </div>
+
+
+    <h1>
+        Create Your Aura
+    </h1>
+
+
+    <p class="subtitle">
+        Tell your match what makes you, you ✨
+    </p>
+
+
+    <form id="profileForm">
+
+
+        <!-- USERNAME -->
+
+        <div class="field">
+
+            <label for="username">
+                👤 Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Choose your display name"
+                required
+                maxlength="30"
+            >
+
+        </div>
+
+
+        <!-- AGE -->
+
+        <div class="field">
+
+            <label for="age">
+                🎂 Age
+            </label>
+
+            <input
+                type="number"
+                id="age"
+                min="18"
+                max="100"
+                placeholder="Your age"
+                required
+            >
+
+            <div class="field-hint">
+                You must be 18 or older to use Match Aura.
+            </div>
+
+        </div>
+
+
+        <!-- GENDER -->
+
+        <div class="field">
+
+            <label for="gender">
+                ✨ Gender
+            </label>
+
+            <select
+                id="gender"
+                required
+            >
+
+                <option value="">
+                    Select gender
+                </option>
+
+                <option value="male">
+                    Male
+                </option>
+
+                <option value="female">
+                    Female
+                </option>
+
+                <option value="other">
+                    Other
+                </option>
+
+                <option value="prefer_not_to_say">
+                    Prefer not to say
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- INTERESTS -->
+
+        <div class="field">
+
+            <div class="interest-title">
+
+                <label>
+                    💜 Your Interests
+                </label>
+
+                <span
+                    class="selected-count"
+                    id="selectedCount">
+
+                    0 selected
+
+                </span>
+
+            </div>
+
+
+            <div class="interest-grid">
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="gaming"
+                        value="Gaming"
+                    >
+
+                    <label for="gaming">
+                        🎮 Gaming
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="music"
+                        value="Music"
+                    >
+
+                    <label for="music">
+                        🎵 Music
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="cricket"
+                        value="Cricket"
+                    >
+
+                    <label for="cricket">
+                        🏏 Cricket
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="badminton"
+                        value="Badminton"
+                    >
+
+                    <label for="badminton">
+                        🏸 Badminton
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="coding"
+                        value="Coding"
+                    >
+
+                    <label for="coding">
+                        💻 Coding
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="travel"
+                        value="Travel"
+                    >
+
+                    <label for="travel">
+                        ✈️ Travel
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="movies"
+                        value="Movies"
+                    >
+
+                    <label for="movies">
+                        🎬 Movies
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="reading"
+                        value="Reading"
+                    >
+
+                    <label for="reading">
+                        📚 Reading
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="fitness"
+                        value="Fitness"
+                    >
+
+                    <label for="fitness">
+                        🏋️ Fitness
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="photography"
+                        value="Photography"
+                    >
+
+                    <label for="photography">
+                        📷 Photography
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="food"
+                        value="Food"
+                    >
+
+                    <label for="food">
+                        🍕 Food
+                    </label>
+
+                </div>
+
+
+                <div class="interest">
+
+                    <input
+                        type="checkbox"
+                        id="anime"
+                        value="Anime"
+                    >
+
+                    <label for="anime">
+                        🌸 Anime
+                    </label>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- CUSTOM INTEREST -->
+
+            <div class="custom-interest">
+
+                <input
+                    type="text"
+                    id="customInterest"
+                    placeholder="Add another interest..."
+                    maxlength="25"
+                >
+
+                <button
+                    type="button"
+                    class="add-interest"
+                    id="addInterest">
+
+                    Add
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="custom-tags"
+                id="customTags">
+
+            </div>
+
+
+            <!-- Hidden field sent to server -->
+
+            <input
+                type="hidden"
+                id="interests"
+                name="interests"
+            >
+
+        </div>
+
+
+        <!-- BIO -->
+
+        <div class="field">
+
+            <label for="bio">
+                💭 About Me
+            </label>
+
+            <textarea
+                id="bio"
+                maxlength="300"
+                placeholder="Tell your match something interesting about you..."
+            ></textarea>
+
+            <div class="field-hint">
+                Maximum 300 characters.
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="save-btn"
+            id="saveButton">
+
+            ✨ Save My Aura
+
+        </button>
+
+
+    </form>
+
+
+    <p id="message"></p>
+
+
+    <div class="back">
+
+        <a href="/chat.html">
+            ← Back to Chat
+        </a>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const form =
+    document.getElementById(
+        "profileForm"
+    );
+
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+
+const saveButton =
+    document.getElementById(
+        "saveButton"
+    );
+
+
+const interestsInput =
+    document.getElementById(
+        "interests"
+    );
+
+
+const selectedCount =
+    document.getElementById(
+        "selectedCount"
+    );
+
+
+const customInterest =
+    document.getElementById(
+        "customInterest"
+    );
+
+
+const addInterest =
+    document.getElementById(
+        "addInterest"
+    );
+
+
+const customTags =
+    document.getElementById(
+        "customTags"
+    );
+
+
+let customInterests = [];
+
+
+/* =========================================
+   GET SELECTED INTERESTS
+========================================= */
+
+function getSelectedInterests() {
+
+    const selected = [];
+
+
+    document
+        .querySelectorAll(
+            '.interest input[type="checkbox"]:checked'
+        )
+        .forEach(
+            function (checkbox) {
+
+                selected.push(
+                    checkbox.value
+                );
+
+            }
+        );
+
+
+    customInterests.forEach(
+        function (interest) {
+
+            selected.push(
+                interest
+            );
+
+        }
+    );
+
+
+    return selected;
+
+}
+
+
+/* =========================================
+   UPDATE INTERESTS
+========================================= */
+
+function updateInterests() {
+
+    const selected =
+        getSelectedInterests();
+
+
+    interestsInput.value =
+        selected.join(", ");
+
+
+    selectedCount.textContent =
+        selected.length +
+        (
+            selected.length === 1
+                ? " selected"
+                : " selected"
+        );
+
+}
+
+
+/* =========================================
+   CHECKBOX EVENTS
+========================================= */
+
+document
+    .querySelectorAll(
+        '.interest input[type="checkbox"]'
+    )
+    .forEach(
+        function (checkbox) {
+
+            checkbox.addEventListener(
+                "change",
+                updateInterests
+            );
+
+        }
+    );
+
+
+/* =========================================
+   ADD CUSTOM INTEREST
+========================================= */
+
+function addCustomInterest() {
+
+    const value =
+        customInterest.value.trim();
+
+
+    if (!value) {
+
+        return;
+
+    }
+
+
+    if (
+        customInterests.includes(
+            value
+        )
+    ) {
+
+        customInterest.value = "";
+
+        return;
+
+    }
+
+
+    if (
+        getSelectedInterests().length >= 10
+    ) {
+
+        alert(
+            "You can select up to 10 interests."
+        );
+
+        return;
+
+    }
+
+
+    customInterests.push(
+        value
+    );
+
+
+    customInterest.value =
+        "";
+
+
+    renderCustomTags();
+
+
+    updateInterests();
+
+}
+
+
+addInterest.addEventListener(
+    "click",
+    addCustomInterest
+);
+
+
+customInterest.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            addCustomInterest();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   RENDER CUSTOM TAGS
+========================================= */
+
+function renderCustomTags() {
+
+    customTags.innerHTML =
+        "";
+
+
+    customInterests.forEach(
+        function (interest, index) {
+
+            const tag =
+                document.createElement(
+                    "span"
+                );
+
+            tag.className =
+                "custom-tag";
+
+
+            tag.innerHTML =
+                `
+                ${escapeHtml(interest)}
+
+                <button
+                    type="button"
+                    class="remove-tag"
+                    data-index="${index}">
+                    ×
+                </button>
+                `;
+
+
+            customTags.appendChild(
+                tag
+            );
+
+        }
+    );
+
+
+    document
+        .querySelectorAll(
+            ".remove-tag"
+        )
+        .forEach(
+            function(button) {
+
+                button.addEventListener(
+                    "click",
+                    function() {
+
+                        const index =
+                            Number(
+                                button.dataset.index
+                            );
+
+
+                        customInterests.splice(
+                            index,
+                            1
+                        );
+
+
+                        renderCustomTags();
+
+                        updateInterests();
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        value;
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================
+   LOGIN USER
+========================================= */
+
+const savedUsername =
+    localStorage.getItem(
+        "username"
+    );
+
+
+const savedEmail =
+    localStorage.getItem(
+        "email"
+    );
+
+
+/*
+ * If username exists,
+ * automatically fill it.
+ */
+
+if (savedUsername) {
+
+    document.getElementById(
+        "username"
+    ).value =
+        savedUsername;
+
+}
+
+
+/* =========================================
+   SAVE PROFILE
+========================================= */
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const username =
+            document.getElementById(
+                "username"
+            ).value.trim();
+
+
+        const age =
+            document.getElementById(
+                "age"
+            ).value;
+
+
+        const gender =
+            document.getElementById(
+                "gender"
+            ).value;
+
+
+        const interests =
+            interestsInput.value.trim();
+
+
+        const bio =
+            document.getElementById(
+                "bio"
+            ).value.trim();
+
+
+        /* ===============================
+           VALIDATION
+        =============================== */
+
+        if (!username) {
+
+            showMessage(
+                "Please enter a username.",
+                "red"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !age ||
+            Number(age) < 18
+        ) {
+
+            showMessage(
+                "You must be at least 18 years old.",
+                "red"
+            );
+
+            return;
+
+        }
+
+
+        if (!gender) {
+
+            showMessage(
+                "Please select your gender.",
+                "red"
+            );
+
+            return;
+
+        }
+
+
+        if (!interests) {
+
+            showMessage(
+                "Please select at least one interest.",
+                "red"
+            );
+
+            return;
+
+        }
+
+
+        /* ===============================
+           LOADING
+        =============================== */
+
+        saveButton.disabled =
+            true;
+
+
+        saveButton.textContent =
+            "Saving your Aura...";
+
+
+        message.textContent =
+            "";
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "/profile",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                username:
+                                    username,
+
+                                age:
+                                    age,
+
+                                gender:
+                                    gender,
+
+                                interests:
+                                    interests,
+
+                                bio:
+                                    bio
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (response.ok) {
+
+
+                /*
+                 * Keep localStorage
+                 * synchronized.
+                 */
+
+                localStorage.setItem(
+                    "username",
+                    username
+                );
+
+
+                showMessage(
+                    data.message ||
+                    "Profile saved successfully!",
+                    "green"
+                );
+
+
+                saveButton.textContent =
+                    "✓ Profile Saved";
+
+
+                /*
+                 * Return to chat
+                 * after a short delay.
+                 */
+
+                setTimeout(
+                    function() {
+
+                        window.location.href =
+                            "/chat.html";
+
+                    },
+                    1200
+                );
+
+
+            }
+
+            else {
+
+
+                showMessage(
+                    data.message ||
+                    "Unable to save profile.",
+                    "red"
+                );
+
+
+                saveButton.disabled =
+                    false;
+
+
+                saveButton.textContent =
+                    "✨ Save My Aura";
+
+            }
+
+
+        }
+
+        catch(error) {
+
+
+            console.error(
+                "Profile error:",
+                error
+            );
+
+
+            showMessage(
+                "Server connection failed.",
+                "red"
+            );
+
+
+            saveButton.disabled =
+                false;
+
+
+            saveButton.textContent =
+                "✨ Save My Aura";
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   MESSAGE HELPER
+========================================= */
+
+function showMessage(
+    text,
+    color
+) {
+
+    message.textContent =
+        text;
+
+    message.style.color =
+        color === "green"
+            ? "#86efac"
+            : "#fda4af";
+
+}
+
+
+/* =========================================
+   INITIAL UPDATE
+========================================= */
+
+updateInterests();
+
+</script>
+
+
+</body>
+
+</html>

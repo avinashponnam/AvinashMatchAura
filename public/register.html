@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Account - Avinash Match Aura</title>
+</head>
+
+<body>
+
+    <h1>💫 Avinash Match Aura</h1>
+
+    <h2>Create Account</h2>
+
+    <form id="registerForm">
+
+        <label>Username:</label><br>
+        <input type="text" id="username" required><br><br>
+
+        <label>Email:</label><br>
+        <input type="email" id="email" required><br><br>
+
+        <label>Password:</label><br>
+        <input type="password" id="password" required minlength="6"><br><br>
+
+        <button type="submit">Create Account</button>
+
+    </form>
+
+    <p id="message"></p>
+
+
+    <script>
+
+        const form =
+            document.getElementById("registerForm");
+
+        form.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const username =
+                document.getElementById("username").value.trim();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+
+            const response = await fetch("/register", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    username,
+                    email,
+                    password
+                })
+
+            });
+
+
+            const data = await response.json();
+
+            document.getElementById("message").textContent =
+                data.message;
+
+        });
+
+    </script>
+
+</body>
+</html>

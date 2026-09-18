@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Avinash Match Aura - Chat</title>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(125,95,255,.35),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(255,70,170,.25),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #0f1025,
+            #21143b,
+            #12152e
+        );
+}
+
+.app {
+
+    width: 100%;
+    max-width: 900px;
+
+    height: 90vh;
+    max-height: 800px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border-radius: 28px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid
+        rgba(255,255,255,.15);
+
+    backdrop-filter:
+        blur(25px);
+
+    box-shadow:
+        0 30px 90px
+        rgba(0,0,0,.5);
+}
+
+
+/* HEADER */
+
+.header {
+
+    padding: 18px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: white;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.1);
+}
+
+.brand {
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.logo {
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 15px;
+
+    font-size: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #667eea,
+            #764ba2
+        );
+}
+
+.brand h1 {
+    font-size: 19px;
+}
+
+.status {
+
+    margin-top: 4px;
+
+    font-size: 12px;
+
+    color:
+        rgba(255,255,255,.55);
+}
+
+.online-dot {
+
+    display: inline-block;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #36e58b;
+
+    margin-right: 5px;
+}
+
+
+/* HEADER BUTTONS */
+
+.header-actions {
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.profile-btn {
+
+    padding: 10px 14px;
+
+    border: none;
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,.1);
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.profile-btn:hover {
+    background: rgba(255,255,255,.18);
+}
+
+
+/* MATCH */
+
+.match-area {
+
+    min-height: 75px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    background:
+        rgba(255,255,255,.04);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+
+    color: white;
+}
+
+.searching {
+    color: rgba(255,255,255,.65);
+    font-size: 14px;
+}
+
+.pulse {
+
+    display: inline-block;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #8c7cff;
+
+    margin-right: 7px;
+
+    animation: pulse 1.4s infinite;
+}
+
+@keyframes pulse {
+
+    0% {
+        transform: scale(1);
+        box-shadow:
+            0 0 0 0
+            rgba(140,124,255,.7);
+    }
+
+    70% {
+        transform: scale(1.15);
+        box-shadow:
+            0 0 0 12px
+            rgba(140,124,255,0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.match-name {
+    display: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.match-name span {
+    color: #b9a7ff;
+}
+
+
+/* PROFILE CARD */
+
+#strangerProfile {
+
+    display: none;
+
+    margin: 15px 20px 5px;
+
+    padding: 16px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(102,126,234,.18),
+            rgba(118,75,162,.18)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    color: white;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.15);
+}
+
+.profile-top {
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 12px;
+}
+
+.profile-avatar {
+
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #667eea,
+            #764ba2
+        );
+
+    box-shadow:
+        0 5px 18px
+        rgba(102,126,234,.35);
+}
+
+.profile-name {
+
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.profile-subtitle {
+
+    margin-top: 3px;
+
+    color:
+        rgba(255,255,255,.55);
+
+    font-size: 12px;
+}
+
+.profile-details {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-bottom: 10px;
+}
+
+.profile-tag {
+
+    padding: 6px 10px;
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    color:
+        rgba(255,255,255,.8);
+
+    font-size: 11px;
+}
+
+.profile-section {
+
+    margin-top: 9px;
+}
+
+.profile-label {
+
+    color: #b9a7ff;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    margin-bottom: 3px;
+}
+
+.profile-value {
+
+    color:
+        rgba(255,255,255,.72);
+
+    font-size: 12px;
+
+    line-height: 1.4;
+}
+
+
+/* MESSAGES */
+
+#messages {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 18px 25px;
+
+    background:
+        rgba(0,0,0,.12);
+}
+
+#messages::-webkit-scrollbar {
+    width: 5px;
+}
+
+#messages::-webkit-scrollbar-thumb {
+
+    background:
+        rgba(255,255,255,.2);
+
+    border-radius: 10px;
+}
+
+.message {
+
+    display: flex;
+
+    margin-bottom: 13px;
+}
+
+.message.mine {
+    justify-content: flex-end;
+}
+
+.message.other {
+    justify-content: flex-start;
+}
+
+.bubble {
+
+    max-width: 72%;
+
+    padding: 12px 16px;
+
+    border-radius: 18px;
+
+    color: white;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+
+    word-break: break-word;
+
+    background:
+        rgba(255,255,255,.1);
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    animation:
+        messageIn .25s ease;
+}
+
+.mine .bubble {
+
+    background:
+        linear-gradient(
+            135deg,
+            #667eea,
+            #764ba2
+        );
+
+    border-bottom-right-radius: 5px;
+}
+
+.other .bubble {
+    border-bottom-left-radius: 5px;
+}
+
+@keyframes messageIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.system-message {
+
+    width: fit-content;
+
+    max-width: 85%;
+
+    margin: 10px auto;
+
+    padding: 8px 14px;
+
+    border-radius: 20px;
+
+    color:
+        rgba(255,255,255,.5);
+
+    background:
+        rgba(255,255,255,.05);
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* TYPING */
+
+#typingIndicator {
+
+    display: none;
+
+    padding:
+        0 25px 9px;
+
+    color:
+        rgba(255,255,255,.55);
+
+    background:
+        rgba(0,0,0,.12);
+
+    font-size: 12px;
+}
+
+.typing-name {
+
+    color: #b9a7ff;
+
+    font-weight: bold;
+}
+
+.typing-dots {
+
+    display: inline-flex;
+
+    gap: 3px;
+
+    margin-left: 5px;
+}
+
+.typing-dots span {
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: #b9a7ff;
+
+    animation:
+        typingBounce 1.2s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: .3s;
+}
+
+@keyframes typingBounce {
+
+    0%,60%,100% {
+        transform: translateY(0);
+        opacity: .4;
+    }
+
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+
+/* ACTIONS */
+
+.actions {
+
+    display: flex;
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 11px 15px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.08);
+}
+
+.action-btn {
+
+    padding: 9px 18px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    font-size: 12px;
+}
+
+.next-btn {
+
+    background:
+        linear-gradient(
+            135deg,
+            #667eea,
+            #764ba2
+        );
+
+    color: white;
+}
+
+.block-btn {
+
+    background:
+        rgba(255,255,255,.1);
+
+    color: #ff9da8;
+}
+
+.report-btn {
+
+    background:
+        rgba(255,255,255,.1);
+
+    color: #ffc47d;
+}
+
+
+/* INPUT */
+
+.input-area {
+
+    display: flex;
+
+    gap: 10px;
+
+    padding:
+        14px 18px 18px;
+
+    background:
+        rgba(255,255,255,.04);
+}
+
+#messageInput {
+
+    flex: 1;
+
+    height: 50px;
+
+    padding:
+        0 18px;
+
+    border-radius: 18px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    outline: none;
+
+    background:
+        rgba(255,255,255,.08);
+
+    color: white;
+
+    font-size: 14px;
+}
+
+#messageInput::placeholder {
+
+    color:
+        rgba(255,255,255,.4);
+}
+
+#messageInput:focus {
+
+    border-color:
+        rgba(130,110,255,.8);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(130,110,255,.1);
+}
+
+#sendButton {
+
+    width: 52px;
+    height: 50px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #667eea,
+            #764ba2
+        );
+
+    color: white;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+#sendButton:disabled {
+
+    opacity: .4;
+
+    cursor: not-allowed;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 0;
+    }
+
+    .app {
+
+        height: 100vh;
+        max-height: none;
+
+        border-radius: 0;
+    }
+
+    .header {
+        padding: 14px;
+    }
+
+    .brand h1 {
+        font-size: 16px;
+    }
+
+    .profile-btn {
+
+        font-size: 11px;
+
+        padding:
+            8px 10px;
+    }
+
+    #messages {
+        padding: 15px 12px;
+    }
+
+    .bubble {
+        max-width: 82%;
+    }
+
+    #strangerProfile {
+
+        margin:
+            10px 12px 3px;
+
+        padding: 13px;
+    }
+
+    .actions {
+
+        padding: 8px 5px;
+
+        gap: 5px;
+    }
+
+    .action-btn {
+
+        padding:
+            8px 10px;
+
+        font-size: 11px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="brand">
+
+            <div class="logo">
+                💫
+            </div>
+
+            <div>
+
+                <h1>
+                    Avinash Match Aura
+                </h1>
+
+                <div class="status">
+
+                    <span class="online-dot"></span>
+
+                    Anonymous Chat
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <button
+                class="profile-btn"
+                id="profileButton">
+
+                👤 Profile
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- MATCH STATUS -->
+
+    <div class="match-area">
+
+        <div
+            class="searching"
+            id="searching">
+
+            <span class="pulse"></span>
+
+            Searching for a stranger...
+
+        </div>
+
+
+        <div
+            class="match-name"
+            id="matchName">
+
+            💜 Connected with
+
+            <span id="strangerName">
+                Stranger
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- STRANGER PROFILE -->
+
+    <div id="strangerProfile">
+
+        <div class="profile-top">
+
+            <div class="profile-avatar">
+                👤
+            </div>
+
+            <div>
+
+                <div
+                    class="profile-name"
+                    id="profileUsername">
+
+                    Stranger
+
+                </div>
+
+                <div
+                    class="profile-subtitle">
+
+                    Your new connection ✨
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="profile-details"
+            id="profileDetails">
+        </div>
+
+
+        <div
+            class="profile-section"
+            id="interestsSection">
+
+            <div class="profile-label">
+                🎯 Interests
+            </div>
+
+            <div
+                class="profile-value"
+                id="profileInterests">
+
+                Not provided
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="profile-section"
+            id="bioSection">
+
+            <div class="profile-label">
+                💬 About
+            </div>
+
+            <div
+                class="profile-value"
+                id="profileBio">
+
+                No bio available.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    <div id="messages">
+
+        <div class="system-message">
+            Welcome to Avinash Match Aura 💫
+        </div>
+
+        <div class="system-message">
+            Finding someone new for you...
+        </div>
+
+    </div>
+
+
+    <!-- TYPING -->
+
+    <div id="typingIndicator">
+
+        <span
+            class="typing-name"
+            id="typingName">
+
+            Stranger
+
+        </span>
+
+        is typing
+
+        <span class="typing-dots">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </span>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="actions">
+
+        <button
+            class="action-btn next-btn"
+            id="nextButton">
+
+            🔄 Next
+
+        </button>
+
+
+        <button
+            class="action-btn block-btn"
+            id="blockButton">
+
+            🚫 Block
+
+        </button>
+
+
+        <button
+            class="action-btn report-btn"
+            id="reportButton">
+
+            🚩 Report
+
+        </button>
+
+    </div>
+
+
+    <!-- INPUT -->
+
+    <form
+        class="input-area"
+        id="messageForm">
+
+        <input
+            type="text"
+            id="messageInput"
+            placeholder="Type a message..."
+            maxlength="500"
+            autocomplete="off"
+            disabled>
+
+
+        <button
+            type="submit"
+            id="sendButton"
+            disabled>
+
+            ➤
+
+        </button>
+
+    </form>
+
+
+</div>
+
+
+<script>
+
+
+/* =================================
+   SOCKET
+================================= */
+
+const socket = io();
+
+
+/* =================================
+   ELEMENTS
+================================= */
+
+const messages =
+    document.getElementById(
+        "messages"
+    );
+
+const messageInput =
+    document.getElementById(
+        "messageInput"
+    );
+
+const messageForm =
+    document.getElementById(
+        "messageForm"
+    );
+
+const searching =
+    document.getElementById(
+        "searching"
+    );
+
+const matchName =
+    document.getElementById(
+        "matchName"
+    );
+
+const strangerName =
+    document.getElementById(
+        "strangerName"
+    );
+
+const strangerProfile =
+    document.getElementById(
+        "strangerProfile"
+    );
+
+const profileUsername =
+    document.getElementById(
+        "profileUsername"
+    );
+
+const profileDetails =
+    document.getElementById(
+        "profileDetails"
+    );
+
+const profileInterests =
+    document.getElementById(
+        "profileInterests"
+    );
+
+const profileBio =
+    document.getElementById(
+        "profileBio"
+    );
+
+const typingIndicator =
+    document.getElementById(
+        "typingIndicator"
+    );
+
+const typingName =
+    document.getElementById(
+        "typingName"
+    );
+
+const nextButton =
+    document.getElementById(
+        "nextButton"
+    );
+
+const blockButton =
+    document.getElementById(
+        "blockButton"
+    );
+
+const reportButton =
+    document.getElementById(
+        "reportButton"
+    );
+
+const profileButton =
+    document.getElementById(
+        "profileButton"
+    );
+
+const sendButton =
+    document.getElementById(
+        "sendButton"
+    );
+
+
+/* =================================
+   STATE
+================================= */
+
+let connected = false;
+
+let typingTimer = null;
+
+
+/* =================================
+   PROFILE BUTTON
+================================= */
+
+profileButton.addEventListener(
+    "click",
+    function() {
+
+        window.location.href =
+            "/profile.html";
+
+    }
+);
+
+
+/* =================================
+   SYSTEM MESSAGE
+================================= */
+
+function systemMessage(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.className =
+        "system-message";
+
+    div.textContent =
+        text;
+
+    messages.appendChild(div);
+
+    messages.scrollTop =
+        messages.scrollHeight;
+}
+
+
+/* =================================
+   CHAT MESSAGE
+================================= */
+
+function addMessage(
+    text,
+    mine
+) {
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        mine
+            ? "message mine"
+            : "message other";
+
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "bubble";
+
+    bubble.textContent =
+        text;
+
+
+    wrapper.appendChild(
+        bubble
+    );
+
+    messages.appendChild(
+        wrapper
+    );
+
+
+    messages.scrollTop =
+        messages.scrollHeight;
+}
+
+
+/* =================================
+   DISPLAY PROFILE
+================================= */
+
+function displayStrangerProfile(
+    profile,
+    fallbackName
+) {
+
+    profile =
+        profile || {};
+
+
+    const username =
+        profile.username ||
+        fallbackName ||
+        "Stranger";
+
+
+    profileUsername.textContent =
+        username;
+
+
+    strangerName.textContent =
+        username;
+
+
+    profileDetails.innerHTML =
+        "";
+
+
+    if (profile.age) {
+
+        addProfileTag(
+            "🎂 " +
+            profile.age
+        );
+
+    }
+
+
+    if (profile.gender) {
+
+        let gender =
+            String(
+                profile.gender
+            );
+
+        gender =
+            gender
+                .replace(
+                    /_/g,
+                    " "
+                );
+
+
+        gender =
+            gender
+                .charAt(0)
+                .toUpperCase() +
+            gender.slice(1);
+
+
+        addProfileTag(
+            "⚧ " +
+            gender
+        );
+
+    }
+
+
+    const interests =
+        profile.interests;
+
+
+    if (
+        Array.isArray(
+            interests
+        )
+    ) {
+
+        profileInterests.textContent =
+            interests.length
+                ? interests.join(
+                    " • "
+                  )
+                : "Not provided";
+
+    }
+
+    else if (
+        typeof interests ===
+        "string"
+    ) {
+
+        profileInterests.textContent =
+            interests.trim()
+                ? interests
+                : "Not provided";
+
+    }
+
+    else {
+
+        profileInterests.textContent =
+            "Not provided";
+
+    }
+
+
+    if (
+        profile.bio &&
+        String(
+            profile.bio
+        ).trim()
+    ) {
+
+        profileBio.textContent =
+            profile.bio;
+
+    }
+
+    else {
+
+        profileBio.textContent =
+            "No bio available.";
+
+    }
+
+
+    typingName.textContent =
+        username;
+
+
+    strangerProfile.style.display =
+        "block";
+}
+
+
+function addProfileTag(
+    text
+) {
+
+    const tag =
+        document.createElement(
+            "div"
+        );
+
+    tag.className =
+        "profile-tag";
+
+    tag.textContent =
+        text;
+
+    profileDetails.appendChild(
+        tag
+    );
+}
+
+
+/* =================================
+   SOCKET CONNECT
+================================= */
+
+socket.on(
+    "connect",
+    function() {
+
+        console.log(
+            "Socket connected:",
+            socket.id
+        );
+
+        findStranger();
+
+    }
+);
+
+
+/* =================================
+   FIND STRANGER
+================================= */
+
+function findStranger() {
+
+    connected = false;
+
+    clearTimeout(
+        typingTimer
+    );
+
+
+    typingIndicator.style.display =
+        "none";
+
+
+    strangerProfile.style.display =
+        "none";
+
+
+    searching.style.display =
+        "block";
+
+
+    matchName.style.display =
+        "none";
+
+
+    messageInput.disabled =
+        true;
+
+
+    sendButton.disabled =
+        true;
+
+
+    messages.innerHTML =
+        "";
+
+
+    systemMessage(
+        "🔎 Looking for someone new..."
+    );
+
+
+    socket.emit(
+        "find stranger"
+    );
+}
+
+
+/* =================================
+   WAITING
+================================= */
+
+socket.on(
+    "waiting",
+    function() {
+
+        connected = false;
+
+        typingIndicator.style.display =
+            "none";
+
+        strangerProfile.style.display =
+            "none";
+
+        searching.style.display =
+            "block";
+
+        matchName.style.display =
+            "none";
+
+        messageInput.disabled =
+            true;
+
+        sendButton.disabled =
+            true;
+
+    }
+);
+
+
+/* =================================
+   MATCHED
+================================= */
+
+socket.on(
+    "matched",
+    function(data) {
+
+        console.log(
+            "MATCH DATA:",
+            data
+        );
+
+
+        connected = true;
+
+
+        searching.style.display =
+            "none";
+
+
+        matchName.style.display =
+            "block";
+
+
+        const profile =
+            data &&
+            data.strangerProfile
+                ? data.strangerProfile
+                : null;
+
+
+        displayStrangerProfile(
+            profile,
+            data &&
+            data.strangerName
+                ? data.strangerName
+                : "Stranger"
+        );
+
+
+        messageInput.disabled =
+            false;
+
+
+        sendButton.disabled =
+            false;
+
+
+        typingIndicator.style.display =
+            "none";
+
+
+        messages.innerHTML =
+            "";
+
+
+        systemMessage(
+            "💜 You are connected with " +
+            (
+                data &&
+                data.strangerName
+                    ? data.strangerName
+                    : "a stranger"
+            )
+        );
+
+
+        if (
+            data &&
+            data.commonInterests &&
+            data.commonInterests.length
+        ) {
+
+            systemMessage(
+                "✨ Common interests: " +
+                data.commonInterests.join(
+                    ", "
+                )
+            );
+
+        }
+
+
+        messageInput.focus();
+
+    }
+);
+
+
+/* =================================
+   SEND MESSAGE
+================================= */
+
+messageForm.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const text =
+            messageInput.value.trim();
+
+
+        if (
+            !text ||
+            !connected
+        ) {
+
+            return;
+
+        }
+
+
+        clearTimeout(
+            typingTimer
+        );
+
+
+        socket.emit(
+            "typing",
+            false
+        );
+
+
+        socket.emit(
+            "chat message",
+            text
+        );
+
+
+        messageInput.value =
+            "";
+
+    }
+);
+
+
+/* =================================
+   RECEIVE MESSAGE
+================================= */
+
+socket.on(
+    "chat message",
+    function(data) {
+
+        if (!data) {
+            return;
+        }
+
+
+        const mine =
+            data.sender ===
+            socket.id;
+
+
+        addMessage(
+            data.message,
+            mine
+        );
+
+
+        if (!mine) {
+
+            typingIndicator.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+/* =================================
+   TYPING
+================================= */
+
+messageInput.addEventListener(
+    "input",
+    function() {
+
+        if (!connected) {
+            return;
+        }
+
+
+        socket.emit(
+            "typing",
+            true
+        );
+
+
+        clearTimeout(
+            typingTimer
+        );
+
+
+        typingTimer =
+            setTimeout(
+                function() {
+
+                    socket.emit(
+                        "typing",
+                        false
+                    );
+
+                },
+                800
+            );
+
+    }
+);
+
+
+/* =================================
+   STRANGER TYPING
+================================= */
+
+socket.on(
+    "stranger typing",
+    function(isTyping) {
+
+        console.log(
+            "Stranger typing:",
+            isTyping
+        );
+
+
+        if (
+            !connected ||
+            !isTyping
+        ) {
+
+            typingIndicator.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        typingIndicator.style.display =
+            "block";
+
+    }
+);
+
+
+/* =================================
+   NEXT
+================================= */
+
+function nextStranger() {
+
+    connected = false;
+
+
+    clearTimeout(
+        typingTimer
+    );
+
+
+    socket.emit(
+        "typing",
+        false
+    );
+
+
+    typingIndicator.style.display =
+        "none";
+
+
+    strangerProfile.style.display =
+        "none";
+
+
+    messageInput.disabled =
+        true;
+
+
+    sendButton.disabled =
+        true;
+
+
+    matchName.style.display =
+        "none";
+
+
+    searching.style.display =
+        "block";
+
+
+    messages.innerHTML =
+        "";
+
+
+    systemMessage(
+        "🔄 Finding a new stranger..."
+    );
+
+
+    socket.emit(
+        "next stranger"
+    );
+
+}
+
+
+nextButton.addEventListener(
+    "click",
+    nextStranger
+);
+
+
+/* =================================
+   BLOCK
+================================= */
+
+blockButton.addEventListener(
+    "click",
+    function() {
+
+        if (!connected) {
+            return;
+        }
+
+
+        if (
+            !confirm(
+                "Block this stranger?"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        socket.emit(
+            "block stranger"
+        );
+
+    }
+);
+
+
+/* =================================
+   BLOCK SUCCESS
+================================= */
+
+socket.on(
+    "block successful",
+    function() {
+
+        connected = false;
+
+
+        typingIndicator.style.display =
+            "none";
+
+
+        strangerProfile.style.display =
+            "none";
+
+
+        messageInput.disabled =
+            true;
+
+
+        sendButton.disabled =
+            true;
+
+
+        systemMessage(
+            "🚫 Stranger blocked successfully."
+        );
+
+
+        setTimeout(
+            findStranger,
+            800
+        );
+
+    }
+);
+
+
+/* =================================
+   BLOCKED
+================================= */
+
+socket.on(
+    "blocked by stranger",
+    function() {
+
+        connected = false;
+
+
+        typingIndicator.style.display =
+            "none";
+
+
+        strangerProfile.style.display =
+            "none";
+
+
+        messageInput.disabled =
+            true;
+
+
+        sendButton.disabled =
+            true;
+
+
+        matchName.style.display =
+            "none";
+
+
+        systemMessage(
+            "👋 The stranger ended the chat."
+        );
+
+
+        setTimeout(
+            findStranger,
+            1000
+        );
+
+    }
+);
+
+
+/* =================================
+   REPORT
+================================= */
+
+reportButton.addEventListener(
+    "click",
+    function() {
+
+        if (!connected) {
+            return;
+        }
+
+
+        const reason =
+            prompt(
+                "Why are you reporting this stranger?"
+            );
+
+
+        if (
+            reason &&
+            reason.trim()
+        ) {
+
+            socket.emit(
+                "report stranger",
+                reason.trim()
+            );
+
+        }
+
+    }
+);
+
+
+/* =================================
+   REPORT SUCCESS
+================================= */
+
+socket.on(
+    "report successful",
+    function() {
+
+        systemMessage(
+            "🚩 Report submitted successfully."
+        );
+
+    }
+);
+
+
+/* =================================
+   DISCONNECTED
+================================= */
+
+socket.on(
+    "stranger disconnected",
+    function() {
+
+        connected = false;
+
+
+        clearTimeout(
+            typingTimer
+        );
+
+
+        typingIndicator.style.display =
+            "none";
+
+
+        strangerProfile.style.display =
+            "none";
+
+
+        messageInput.disabled =
+            true;
+
+
+        sendButton.disabled =
+            true;
+
+
+        matchName.style.display =
+            "none";
+
+
+        searching.style.display =
+            "block";
+
+
+        systemMessage(
+            "👋 Stranger disconnected."
+        );
+
+
+        setTimeout(
+            findStranger,
+            1000
+        );
+
+    }
+);
+
+
+/* =================================
+   ENTER TO SEND
+================================= */
+
+messageInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            messageForm.requestSubmit();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
