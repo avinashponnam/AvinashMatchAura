@@ -1,77 +1,1078 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Create Account - Avinash Match Aura</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(125,95,255,.38),
+                    transparent 32%
+                ),
+
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(255,70,170,.28),
+                    transparent 32%
+                ),
+
+                linear-gradient(
+                    135deg,
+                    #0f1025,
+                    #21143b,
+                    #12152e
+                );
+
+            overflow-x: hidden;
+        }
+
+
+        /* =========================
+           BACKGROUND GLOW
+        ========================= */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            width: 280px;
+            height: 280px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(118,75,162,.18);
+
+            filter: blur(80px);
+
+            top: -100px;
+            right: -80px;
+
+            pointer-events: none;
+        }
+
+
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            width: 250px;
+            height: 250px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(102,126,234,.15);
+
+            filter: blur(80px);
+
+            bottom: -100px;
+            left: -80px;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        .container {
+
+            width: 100%;
+
+            max-width: 460px;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .register-card {
+
+            width: 100%;
+
+            padding: 38px 35px;
+
+            border-radius: 28px;
+
+            background:
+                rgba(255,255,255,.085);
+
+            border:
+                1px solid
+                rgba(255,255,255,.16);
+
+            backdrop-filter:
+                blur(25px);
+
+            -webkit-backdrop-filter:
+                blur(25px);
+
+            box-shadow:
+                0 30px 90px
+                rgba(0,0,0,.48);
+
+            animation:
+                cardIn .6s ease;
+        }
+
+
+        @keyframes cardIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(25px)
+                    scale(.97);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+        }
+
+
+        /* =========================
+           LOGO
+        ========================= */
+
+        .logo-box {
+
+            width: 68px;
+            height: 68px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 21px;
+
+            font-size: 34px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+                );
+
+            box-shadow:
+                0 12px 35px
+                rgba(102,126,234,.35);
+
+            animation:
+                logoFloat 3s ease-in-out infinite;
+        }
+
+
+        @keyframes logoFloat {
+
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+
+        /* =========================
+           TITLE
+        ========================= */
+
+        .brand {
+
+            text-align: center;
+
+            color: white;
+        }
+
+
+        .brand h1 {
+
+            font-size: 25px;
+
+            margin-bottom: 8px;
+
+            letter-spacing: .2px;
+        }
+
+
+        .brand h1 span {
+
+            color: #b9a7ff;
+        }
+
+
+        .subtitle {
+
+            color:
+                rgba(255,255,255,.58);
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-group {
+
+            margin-bottom: 18px;
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color:
+                rgba(255,255,255,.82);
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+
+        .input-wrapper {
+
+            position: relative;
+        }
+
+
+        .input-icon {
+
+            position: absolute;
+
+            left: 15px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            font-size: 16px;
+
+            opacity: .8;
+
+            pointer-events: none;
+        }
+
+
+        input {
+
+            width: 100%;
+
+            height: 52px;
+
+            padding:
+                0 16px 0 45px;
+
+            border-radius: 16px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.12);
+
+            outline: none;
+
+            background:
+                rgba(255,255,255,.075);
+
+            color: white;
+
+            font-size: 14px;
+
+            transition:
+                .25s ease;
+        }
+
+
+        input::placeholder {
+
+            color:
+                rgba(255,255,255,.35);
+        }
+
+
+        input:focus {
+
+            border-color:
+                rgba(150,130,255,.85);
+
+            background:
+                rgba(255,255,255,.10);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(130,110,255,.10);
+        }
+
+
+        /* =========================
+           PASSWORD
+        ========================= */
+
+        .password-toggle {
+
+            position: absolute;
+
+            right: 14px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color:
+                rgba(255,255,255,.55);
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+            padding: 5px;
+        }
+
+
+        .password-toggle:hover {
+
+            color: white;
+        }
+
+
+        #password {
+
+            padding-right: 48px;
+        }
+
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        #registerButton {
+
+            width: 100%;
+
+            height: 53px;
+
+            margin-top: 8px;
+
+            border: none;
+
+            border-radius: 17px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+                );
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 12px 30px
+                rgba(102,126,234,.28);
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                opacity .2s ease;
+        }
+
+
+        #registerButton:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 16px 38px
+                rgba(102,126,234,.38);
+        }
+
+
+        #registerButton:active {
+
+            transform:
+                translateY(0);
+        }
+
+
+        #registerButton:disabled {
+
+            opacity: .6;
+
+            cursor:
+                not-allowed;
+
+            transform:
+                none;
+        }
+
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        #message {
+
+            min-height: 20px;
+
+            margin-top: 17px;
+
+            padding: 0 5px;
+
+            text-align: center;
+
+            font-size: 13px;
+
+            line-height: 1.4;
+        }
+
+
+        #message.success {
+
+            color: #73f2b2;
+        }
+
+
+        #message.error {
+
+            color: #ff9da8;
+        }
+
+
+        /* =========================
+           LOGIN LINK
+        ========================= */
+
+        .login-area {
+
+            margin-top: 25px;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,.09);
+
+            text-align: center;
+
+            color:
+                rgba(255,255,255,.52);
+
+            font-size: 13px;
+        }
+
+
+        .login-link {
+
+            color: #b9a7ff;
+
+            font-weight: bold;
+
+            text-decoration: none;
+
+            margin-left: 4px;
+        }
+
+
+        .login-link:hover {
+
+            color: white;
+
+            text-decoration:
+                underline;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+
+            margin-top: 18px;
+
+            text-align: center;
+
+            color:
+                rgba(255,255,255,.30);
+
+            font-size: 10px;
+
+            letter-spacing: .3px;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 500px) {
+
+            body {
+
+                padding: 15px;
+            }
+
+
+            .register-card {
+
+                padding:
+                    30px 22px;
+
+                border-radius: 24px;
+            }
+
+
+            .brand h1 {
+
+                font-size: 22px;
+            }
+
+
+            .subtitle {
+
+                font-size: 12px;
+
+                margin-bottom: 25px;
+            }
+
+
+            input {
+
+                height: 50px;
+            }
+
+
+            #registerButton {
+
+                height: 51px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-    <h1>💫 Avinash Match Aura</h1>
 
-    <h2>Create Account</h2>
-
-    <form id="registerForm">
-
-        <label>Username:</label><br>
-        <input type="text" id="username" required><br><br>
-
-        <label>Email:</label><br>
-        <input type="email" id="email" required><br><br>
-
-        <label>Password:</label><br>
-        <input type="password" id="password" required minlength="6"><br><br>
-
-        <button type="submit">Create Account</button>
-
-    </form>
-
-    <p id="message"></p>
+<div class="container">
 
 
-    <script>
-
-        const form =
-            document.getElementById("registerForm");
-
-        form.addEventListener("submit", async function(event) {
-
-            event.preventDefault();
-
-            const username =
-                document.getElementById("username").value.trim();
-
-            const email =
-                document.getElementById("email").value.trim();
-
-            const password =
-                document.getElementById("password").value;
+    <div class="register-card">
 
 
-            const response = await fetch("/register", {
+        <!-- LOGO -->
 
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password
-                })
-
-            });
+        <div class="logo-box">
+            💫
+        </div>
 
 
-            const data = await response.json();
+        <!-- TITLE -->
 
-            document.getElementById("message").textContent =
-                data.message;
+        <div class="brand">
 
-        });
+            <h1>
+                Join <span>Avinash Match Aura</span>
+            </h1>
 
-    </script>
+            <p class="subtitle">
+                Create your account and start
+                connecting with new people ✨
+            </p>
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <form id="registerForm">
+
+
+            <!-- USERNAME -->
+
+            <div class="form-group">
+
+                <label for="username">
+                    👤 Username
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        @
+                    </span>
+
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Choose a username"
+                        autocomplete="username"
+                        minlength="3"
+                        required>
+
+                </div>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    ✉️ Email
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        ✉
+                    </span>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required>
+
+                </div>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    🔐 Password
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required>
+
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="passwordToggle">
+
+                        👁️
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="submit"
+                id="registerButton">
+
+                ✨ Create My Account
+
+            </button>
+
+
+        </form>
+
+
+        <!-- MESSAGE -->
+
+        <p id="message"></p>
+
+
+        <!-- LOGIN -->
+
+        <div class="login-area">
+
+            Already have an account?
+
+            <a
+                href="/login.html"
+                class="login-link">
+
+                Login
+
+            </a>
+
+        </div>
+
+
+        <div class="footer">
+
+            💫 Avinash Match Aura · Connect. Chat. Discover.
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =================================
+   ELEMENTS
+================================= */
+
+const form =
+    document.getElementById(
+        "registerForm"
+    );
+
+const usernameInput =
+    document.getElementById(
+        "username"
+    );
+
+const emailInput =
+    document.getElementById(
+        "email"
+    );
+
+const passwordInput =
+    document.getElementById(
+        "password"
+    );
+
+const passwordToggle =
+    document.getElementById(
+        "passwordToggle"
+    );
+
+const registerButton =
+    document.getElementById(
+        "registerButton"
+    );
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+
+/* =================================
+   PASSWORD SHOW / HIDE
+================================= */
+
+passwordToggle.addEventListener(
+    "click",
+    function() {
+
+        if (
+            passwordInput.type ===
+            "password"
+        ) {
+
+            passwordInput.type =
+                "text";
+
+            passwordToggle.textContent =
+                "🙈";
+
+        }
+
+        else {
+
+            passwordInput.type =
+                "password";
+
+            passwordToggle.textContent =
+                "👁️";
+
+        }
+
+    }
+);
+
+
+/* =================================
+   REGISTER
+================================= */
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const username =
+            usernameInput.value.trim();
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+
+        message.textContent =
+            "";
+
+        message.className =
+            "";
+
+
+        /* =========================
+           FRONTEND VALIDATION
+        ========================= */
+
+        if (
+            username.length < 3
+        ) {
+
+            message.textContent =
+                "Username must contain at least 3 characters.";
+
+            message.className =
+                "error";
+
+            usernameInput.focus();
+
+            return;
+
+        }
+
+
+        if (
+            password.length < 6
+        ) {
+
+            message.textContent =
+                "Password must contain at least 6 characters.";
+
+            message.className =
+                "error";
+
+            passwordInput.focus();
+
+            return;
+
+        }
+
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        registerButton.disabled =
+            true;
+
+        registerButton.textContent =
+            "⏳ Creating your account...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/register",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                username:
+                                    username,
+
+                                email:
+                                    email,
+
+                                password:
+                                    password
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                data.success
+            ) {
+
+                message.textContent =
+                    "✨ Account created successfully! Redirecting to login...";
+
+                message.className =
+                    "success";
+
+
+                form.reset();
+
+
+                setTimeout(
+                    function() {
+
+                        window.location.href =
+                            "/login.html";
+
+                    },
+                    1500
+                );
+
+            }
+
+            else {
+
+                message.textContent =
+                    data.message ||
+                    "Unable to create account.";
+
+                message.className =
+                    "error";
+
+
+                registerButton.disabled =
+                    false;
+
+                registerButton.textContent =
+                    "✨ Create My Account";
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Registration error:",
+                error
+            );
+
+
+            message.textContent =
+                "❌ Unable to connect to the server. Please try again.";
+
+            message.className =
+                "error";
+
+
+            registerButton.disabled =
+                false;
+
+            registerButton.textContent =
+                "✨ Create My Account";
+
+        }
+
+    }
+);
+
+</script>
+
 
 </body>
+
 </html>
