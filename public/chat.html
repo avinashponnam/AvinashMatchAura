@@ -1071,9 +1071,7 @@ body {
 
 </div>
 
-
 <script>
-
 
 /* =================================
    SOCKET
@@ -1087,94 +1085,58 @@ const socket = io();
 ================================= */
 
 const messages =
-    document.getElementById(
-        "messages"
-    );
+    document.getElementById("messages");
 
 const messageInput =
-    document.getElementById(
-        "messageInput"
-    );
+    document.getElementById("messageInput");
 
 const messageForm =
-    document.getElementById(
-        "messageForm"
-    );
+    document.getElementById("messageForm");
 
 const searching =
-    document.getElementById(
-        "searching"
-    );
+    document.getElementById("searching");
 
 const matchName =
-    document.getElementById(
-        "matchName"
-    );
+    document.getElementById("matchName");
 
 const strangerName =
-    document.getElementById(
-        "strangerName"
-    );
+    document.getElementById("strangerName");
 
 const strangerProfile =
-    document.getElementById(
-        "strangerProfile"
-    );
+    document.getElementById("strangerProfile");
 
 const profileUsername =
-    document.getElementById(
-        "profileUsername"
-    );
+    document.getElementById("profileUsername");
 
 const profileDetails =
-    document.getElementById(
-        "profileDetails"
-    );
+    document.getElementById("profileDetails");
 
 const profileInterests =
-    document.getElementById(
-        "profileInterests"
-    );
+    document.getElementById("profileInterests");
 
 const profileBio =
-    document.getElementById(
-        "profileBio"
-    );
+    document.getElementById("profileBio");
 
 const typingIndicator =
-    document.getElementById(
-        "typingIndicator"
-    );
+    document.getElementById("typingIndicator");
 
 const typingName =
-    document.getElementById(
-        "typingName"
-    );
+    document.getElementById("typingName");
 
 const nextButton =
-    document.getElementById(
-        "nextButton"
-    );
+    document.getElementById("nextButton");
 
 const blockButton =
-    document.getElementById(
-        "blockButton"
-    );
+    document.getElementById("blockButton");
 
 const reportButton =
-    document.getElementById(
-        "reportButton"
-    );
+    document.getElementById("reportButton");
 
 const profileButton =
-    document.getElementById(
-        "profileButton"
-    );
+    document.getElementById("profileButton");
 
 const sendButton =
-    document.getElementById(
-        "sendButton"
-    );
+    document.getElementById("sendButton");
 
 
 /* =================================
@@ -1182,23 +1144,56 @@ const sendButton =
 ================================= */
 
 let connected = false;
-
 let typingTimer = null;
+let identified = false;
+let currentUsername = null;
 
 
 /* =================================
-   PROFILE BUTTON
+   GET LOGGED-IN USERNAME
 ================================= */
 
-profileButton.addEventListener(
-    "click",
-    function() {
+function getLoggedInUsername() {
 
-        window.location.href =
-            "/profile.html";
+    /*
+     * We support the common storage names
+     * your login page may already be using.
+     */
+
+    const possibleNames = [
+
+        localStorage.getItem("username"),
+
+        localStorage.getItem("loggedInUsername"),
+
+        localStorage.getItem("currentUsername"),
+
+        sessionStorage.getItem("username"),
+
+        sessionStorage.getItem("loggedInUsername"),
+
+        sessionStorage.getItem("currentUsername")
+
+    ];
+
+
+    for (const name of possibleNames) {
+
+        if (
+            name &&
+            typeof name === "string" &&
+            name.trim()
+        ) {
+
+            return name.trim();
+
+        }
 
     }
-);
+
+
+    return null;
+}
 
 
 /* =================================
@@ -1208,9 +1203,7 @@ profileButton.addEventListener(
 function systemMessage(text) {
 
     const div =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     div.className =
         "system-message";
@@ -1222,6 +1215,7 @@ function systemMessage(text) {
 
     messages.scrollTop =
         messages.scrollHeight;
+
 }
 
 
@@ -1229,15 +1223,10 @@ function systemMessage(text) {
    CHAT MESSAGE
 ================================= */
 
-function addMessage(
-    text,
-    mine
-) {
+function addMessage(text, mine) {
 
     const wrapper =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     wrapper.className =
         mine
@@ -1246,9 +1235,7 @@ function addMessage(
 
 
     const bubble =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     bubble.className =
         "bubble";
@@ -1257,22 +1244,38 @@ function addMessage(
         text;
 
 
-    wrapper.appendChild(
-        bubble
-    );
+    wrapper.appendChild(bubble);
 
-    messages.appendChild(
-        wrapper
-    );
-
+    messages.appendChild(wrapper);
 
     messages.scrollTop =
         messages.scrollHeight;
+
 }
 
 
 /* =================================
-   DISPLAY PROFILE
+   PROFILE TAG
+================================= */
+
+function addProfileTag(text) {
+
+    const tag =
+        document.createElement("div");
+
+    tag.className =
+        "profile-tag";
+
+    tag.textContent =
+        text;
+
+    profileDetails.appendChild(tag);
+
+}
+
+
+/* =================================
+   DISPLAY STRANGER PROFILE
 ================================= */
 
 function displayStrangerProfile(
@@ -1305,8 +1308,7 @@ function displayStrangerProfile(
     if (profile.age) {
 
         addProfileTag(
-            "🎂 " +
-            profile.age
+            "🎂 " + profile.age
         );
 
     }
@@ -1315,28 +1317,17 @@ function displayStrangerProfile(
     if (profile.gender) {
 
         let gender =
-            String(
-                profile.gender
-            );
-
-        gender =
-            gender
-                .replace(
-                    /_/g,
-                    " "
-                );
+            String(profile.gender)
+                .replace(/_/g, " ");
 
 
         gender =
-            gender
-                .charAt(0)
-                .toUpperCase() +
+            gender.charAt(0).toUpperCase() +
             gender.slice(1);
 
 
         addProfileTag(
-            "⚧ " +
-            gender
+            "⚧ " + gender
         );
 
     }
@@ -1346,24 +1337,17 @@ function displayStrangerProfile(
         profile.interests;
 
 
-    if (
-        Array.isArray(
-            interests
-        )
-    ) {
+    if (Array.isArray(interests)) {
 
         profileInterests.textContent =
             interests.length
-                ? interests.join(
-                    " • "
-                  )
+                ? interests.join(" • ")
                 : "Not provided";
 
     }
 
     else if (
-        typeof interests ===
-        "string"
+        typeof interests === "string"
     ) {
 
         profileInterests.textContent =
@@ -1383,9 +1367,7 @@ function displayStrangerProfile(
 
     if (
         profile.bio &&
-        String(
-            profile.bio
-        ).trim()
+        String(profile.bio).trim()
     ) {
 
         profileBio.textContent =
@@ -1407,28 +1389,23 @@ function displayStrangerProfile(
 
     strangerProfile.style.display =
         "block";
+
 }
 
 
-function addProfileTag(
-    text
-) {
+/* =================================
+   PROFILE BUTTON
+================================= */
 
-    const tag =
-        document.createElement(
-            "div"
-        );
+profileButton.addEventListener(
+    "click",
+    function() {
 
-    tag.className =
-        "profile-tag";
+        window.location.href =
+            "/profile.html";
 
-    tag.textContent =
-        text;
-
-    profileDetails.appendChild(
-        tag
-    );
-}
+    }
+);
 
 
 /* =================================
@@ -1444,6 +1421,92 @@ socket.on(
             socket.id
         );
 
+
+        /*
+         * IMPORTANT:
+         * Identify the real logged-in user
+         * BEFORE searching for a stranger.
+         */
+
+        currentUsername =
+            getLoggedInUsername();
+
+
+        console.log(
+            "Logged-in username:",
+            currentUsername
+        );
+
+
+        if (!currentUsername) {
+
+            console.error(
+                "Username not found in browser storage."
+            );
+
+
+            systemMessage(
+                "⚠️ Please login again."
+            );
+
+
+            return;
+
+        }
+
+
+        /*
+         * Tell server who this socket belongs to.
+         */
+
+        socket.emit(
+            "identify user",
+            currentUsername
+        );
+
+    }
+);
+
+
+/* =================================
+   IDENTIFIED
+================================= */
+
+socket.on(
+    "identified",
+    function(data) {
+
+        console.log(
+            "Server identified user:",
+            data
+        );
+
+
+        if (
+            !data ||
+            !data.username
+        ) {
+
+            console.error(
+                "Server could not identify user."
+            );
+
+            return;
+
+        }
+
+
+        currentUsername =
+            data.username;
+
+
+        identified = true;
+
+
+        /*
+         * Only search AFTER identification.
+         */
+
         findStranger();
 
     }
@@ -1456,7 +1519,19 @@ socket.on(
 
 function findStranger() {
 
+    if (!identified) {
+
+        console.log(
+            "Waiting for socket identification..."
+        );
+
+        return;
+
+    }
+
+
     connected = false;
+
 
     clearTimeout(
         typingTimer
@@ -1496,9 +1571,16 @@ function findStranger() {
     );
 
 
+    console.log(
+        "Finding stranger for:",
+        currentUsername
+    );
+
+
     socket.emit(
         "find stranger"
     );
+
 }
 
 
@@ -1512,23 +1594,34 @@ socket.on(
 
         connected = false;
 
+
         typingIndicator.style.display =
             "none";
+
 
         strangerProfile.style.display =
             "none";
 
+
         searching.style.display =
             "block";
+
 
         matchName.style.display =
             "none";
 
+
         messageInput.disabled =
             true;
 
+
         sendButton.disabled =
             true;
+
+
+        console.log(
+            "Waiting for another user..."
+        );
 
     }
 );
@@ -1543,9 +1636,28 @@ socket.on(
     function(data) {
 
         console.log(
+            "================================="
+        );
+
+        console.log(
             "MATCH DATA:",
             data
         );
+
+        console.log(
+            "================================="
+        );
+
+
+        if (!data) {
+
+            console.error(
+                "Empty match data."
+            );
+
+            return;
+
+        }
 
 
         connected = true;
@@ -1560,18 +1672,19 @@ socket.on(
 
 
         const profile =
-            data &&
-            data.strangerProfile
-                ? data.strangerProfile
-                : null;
+            data.strangerProfile ||
+            {};
+
+
+        const name =
+            profile.username ||
+            data.strangerName ||
+            "Stranger";
 
 
         displayStrangerProfile(
             profile,
-            data &&
-            data.strangerName
-                ? data.strangerName
-                : "Stranger"
+            name
         );
 
 
@@ -1593,26 +1706,18 @@ socket.on(
 
         systemMessage(
             "💜 You are connected with " +
-            (
-                data &&
-                data.strangerName
-                    ? data.strangerName
-                    : "a stranger"
-            )
+            name
         );
 
 
         if (
-            data &&
             data.commonInterests &&
             data.commonInterests.length
         ) {
 
             systemMessage(
                 "✨ Common interests: " +
-                data.commonInterests.join(
-                    ", "
-                )
+                data.commonInterests.join(", ")
             );
 
         }
@@ -1682,7 +1787,9 @@ socket.on(
     function(data) {
 
         if (!data) {
+
             return;
+
         }
 
 
@@ -1717,7 +1824,9 @@ messageInput.addEventListener(
     function() {
 
         if (!connected) {
+
             return;
+
         }
 
 
@@ -1757,12 +1866,6 @@ socket.on(
     "stranger typing",
     function(isTyping) {
 
-        console.log(
-            "Stranger typing:",
-            isTyping
-        );
-
-
         if (
             !connected ||
             !isTyping
@@ -1784,7 +1887,7 @@ socket.on(
 
 
 /* =================================
-   NEXT
+   NEXT STRANGER
 ================================= */
 
 function nextStranger() {
@@ -1858,7 +1961,9 @@ blockButton.addEventListener(
     function() {
 
         if (!connected) {
+
             return;
+
         }
 
 
@@ -1976,7 +2081,9 @@ reportButton.addEventListener(
     function() {
 
         if (!connected) {
+
             return;
+
         }
 
 
@@ -2094,7 +2201,3 @@ messageInput.addEventListener(
 );
 
 </script>
-
-</body>
-
-</html>
