@@ -8,11 +8,9 @@ require("dotenv").config();
 
 const app = express();
 
-const server =
-    http.createServer(app);
+const server = http.createServer(app);
 
-const io =
-    new Server(server);
+const io = new Server(server);
 
 app.use(express.json());
 
@@ -248,13 +246,15 @@ app.post(
                 });
 
             }
+             const normalizedEmail =
+                String(email).trim().toLowerCase();
 
 
             const user =
                 await usersCollection.findOne({
 
                     email:
-                        email.toLowerCase()
+                        normalizedEmail
 
                 });
 
@@ -361,8 +361,12 @@ app.post(
             } = req.body;
 
 
+            const cleanUsername =
+                String(username || "").trim();
+
+
             if (
-                !username ||
+                !cleanUsername ||
                 !age ||
                 !gender
             ) {
@@ -408,7 +412,7 @@ app.post(
 
                     {
                         username:
-                            username
+                            cleanUsername
                     },
 
                     {
@@ -422,10 +426,14 @@ app.post(
                                 gender,
 
                             interests:
-                                interests || "",
+                                String(
+                                    interests || ""
+                                ).trim(),
 
                             bio:
-                                bio || "",
+                                String(
+                                    bio || ""
+                                ).trim(),
 
                             updatedAt:
                                 new Date()
@@ -455,7 +463,7 @@ app.post(
 
             console.log(
                 "Profile updated:",
-                username
+                cleanUsername
             );
 
 
@@ -513,6 +521,9 @@ app.get(
 
     }
 );
+
+
+            
 
 
 /* ==============================
@@ -924,6 +935,13 @@ io.on(
                         interests
                     );
 
+                    socket.emit(
+    "identified",
+    {
+        username: user.username
+    }
+);
+
                 }
 
                 catch (error) {
@@ -1124,172 +1142,303 @@ io.on(
                         );
 
                     }
+/* ==========================
+   VERIFY USERNAMES
+========================== */
+
+const currentUsername =
+    socketUsers.get(socket.id);
+
+const matchedUsername =
+    socketUsers.get(matchedSocket);
 
 
-                    /* ==========================
-                       COMMON INTERESTS
-                    ========================== */
+console.log(
+    "================================="
+);
 
-                    const commonInterests =
-                        getCommonInterests(
+console.log(
+    "CURRENT USERNAME:",
+    currentUsername
+);
 
-                            socketInterests.get(
-                                socket.id
-                            ) || [],
+console.log(
+    "MATCHED USERNAME:",
+    matchedUsername
+);
 
-                            socketInterests.get(
-                                matchedSocket
-                            ) || []
+console.log(
+    "CURRENT SOCKET:",
+    socket.id
+);
 
-                        );
+console.log(
+    "MATCHED SOCKET:",
+    matchedSocket
+);
 
-
-                    /* ==========================
-                       REAL USERNAMES
-                    ========================== */
-
-                    const currentUsername =
-                        socketUsers.get(
-                            socket.id
-                        );
-
-
-                    const matchedUsername =
-                        socketUsers.get(
-                            matchedSocket
-                        );
+console.log(
+    "================================="
+);
 
 
-                    /* ==========================
-                       GET BOTH PROFILES
-                    ========================== */
+/* ==========================
+   MAKE SURE BOTH USERS
+   ARE IDENTIFIED
+========================== */
 
-                    const currentProfile =
-                        await getUserProfile(
-                            currentUsername
-                        );
+if (
+    !currentUsername ||
+    !matchedUsername
+) {
 
+    console.log(
+        "Matching stopped: username missing."
+    );
 
-                    const matchedProfile =
-                        await getUserProfile(
-                            matchedUsername
-                        );
+    console.log(
+        "Current:",
+        currentUsername
+    );
 
+    console.log(
+        "Matched:",
+        matchedUsername
+    );
 
-                    console.log(
-                        "MATCH:",
-                        currentUsername ||
-                        strangerName,
+    /*
+     * Put the matched user back
+     * into the waiting queue.
+     */
 
-                        "<->",
+    if (
+        otherSocket &&
+        !waitingUsers.has(
+            matchedSocket
+        )
+    ) {
 
-                        matchedUsername ||
-                        otherName
-                    );
+        waitingUsers.set(
+            matchedSocket,
+            true
+        );
 
-
-                    /* ==========================
-                       SEND MATCH TO CURRENT USER
-                    ========================== */
-
-                    socket.emit(
-                        "matched",
-                        {
-
-                            roomId:
-                                roomId,
-
-                            strangerName:
-                                matchedUsername ||
-                                otherName ||
-                                "Stranger",
-
-                            strangerProfile:
-                                matchedProfile ||
-                                {
-
-                                    username:
-                                        matchedUsername ||
-                                        otherName ||
-                                        "Stranger",
-
-                                    age:
-                                        null,
-
-                                    gender:
-                                        "",
-
-                                    interests:
-                                        "",
-
-                                    bio:
-                                        ""
-
-                                },
-
-                            commonInterests:
-                                commonInterests || [],
-
-                            matchScore:
-                                commonInterests
-                                    ? commonInterests.length
-                                    : 0
-
-                        }
-                    );
+    }
 
 
-                    /* ==========================
-                       SEND MATCH TO OTHER USER
-                    ========================== */
+    socket.emit(
+        "waiting"
+    );
 
-                    io.to(
-                        matchedSocket
-                    ).emit(
-                        "matched",
-                        {
+    return;
 
-                            roomId:
-                                roomId,
+}
 
-                            strangerName:
-                                currentUsername ||
-                                strangerName ||
-                                "Stranger",
 
-                            strangerProfile:
-                                currentProfile ||
-                                {
+/* ==========================
+   GET BOTH PROFILES
+========================== */
 
-                                    username:
-                                        currentUsername ||
-                                        strangerName ||
-                                        "Stranger",
+const currentProfile =
+    await getUserProfile(
+        currentUsername
+    );
 
-                                    age:
-                                        null,
 
-                                    gender:
-                                        "",
+const matchedProfile =
+    await getUserProfile(
+        matchedUsername
+    );
 
-                                    interests:
-                                        "",
 
-                                    bio:
-                                        ""
+console.log(
+    "CURRENT PROFILE:",
+    currentProfile
+);
 
-                                },
+console.log(
+    "MATCHED PROFILE:",
+    matchedProfile
+);
 
-                            commonInterests:
-                                commonInterests || [],
 
-                            matchScore:
-                                commonInterests
-                                    ? commonInterests.length
-                                    : 0
+/* ==========================
+   COMMON INTERESTS
+========================== */
 
-                        }
-                    );
+const commonInterests =
+    getCommonInterests(
+
+        currentProfile?.interests ||
+        socketInterests.get(
+            socket.id
+        ) ||
+        [],
+
+        matchedProfile?.interests ||
+        socketInterests.get(
+            matchedSocket
+        ) ||
+        []
+
+    );
+
+
+console.log(
+    "COMMON INTERESTS:",
+    commonInterests
+);
+
+
+/* ==========================
+   CURRENT USER PROFILE
+========================== */
+
+const currentProfileData = {
+
+    username:
+        currentProfile?.username ||
+        currentUsername,
+
+    age:
+        currentProfile?.age ??
+        null,
+
+    gender:
+        currentProfile?.gender ||
+        "",
+
+    interests:
+        currentProfile?.interests ||
+        "",
+
+    bio:
+        currentProfile?.bio ||
+        ""
+
+};
+
+
+/* ==========================
+   MATCHED USER PROFILE
+========================== */
+
+const matchedProfileData = {
+
+    username:
+        matchedProfile?.username ||
+        matchedUsername,
+
+    age:
+        matchedProfile?.age ??
+        null,
+
+    gender:
+        matchedProfile?.gender ||
+        "",
+
+    interests:
+        matchedProfile?.interests ||
+        "",
+
+    bio:
+        matchedProfile?.bio ||
+        ""
+
+};
+
+
+/* ==========================
+   SEND MATCH TO CURRENT USER
+========================== */
+
+socket.emit(
+    "matched",
+    {
+
+        roomId:
+            roomId,
+
+        strangerName:
+            matchedUsername,
+
+        strangerProfile:
+            matchedProfileData,
+
+        commonInterests:
+            commonInterests,
+
+        matchScore:
+            commonInterests.length
+
+    }
+);
+
+
+/* ==========================
+   SEND MATCH TO OTHER USER
+========================== */
+
+if (
+    otherSocket
+) {
+
+    otherSocket.emit(
+        "matched",
+        {
+
+            roomId:
+                roomId,
+
+            strangerName:
+                currentUsername,
+
+            strangerProfile:
+                currentProfileData,
+
+            commonInterests:
+                commonInterests,
+
+            matchScore:
+                commonInterests.length
+
+        }
+    );
+
+}
+/* ==========================
+   MATCH SUCCESS
+========================== */
+
+console.log(
+    "================================="
+);
+
+console.log(
+    "MATCH SUCCESS:",
+    currentUsername || "Unknown",
+    "<->",
+    matchedUsername || "Unknown"
+);
+
+console.log(
+    "CURRENT PROFILE:",
+    currentProfile
+);
+
+console.log(
+    "MATCHED PROFILE:",
+    matchedProfile
+);
+
+console.log(
+    "================================="
+);
+
+
+/* ==========================
+   CLOSE FIND STRANGER
+========================== */
 
                 }
 
@@ -1300,93 +1449,82 @@ io.on(
                         error
                     );
 
-
-                    socket.emit(
-                        "waiting"
-                    );
-
                 }
 
             }
         );
 
 
-        /* ==========================
-           CHAT MESSAGE
-        ========================== */
+/* ==========================
+   CHAT MESSAGE
+========================== */
 
-        socket.on(
+socket.on(
+    "chat message",
+    (message) => {
+
+        const roomId =
+            activeRooms.get(
+                socket.id
+            );
+
+
+        if (!roomId) {
+
+            return;
+
+        }
+
+
+        if (
+            typeof message !== "string"
+        ) {
+
+            return;
+
+        }
+
+
+        const cleanMessage =
+            message.trim();
+
+
+        if (!cleanMessage) {
+
+            return;
+
+        }
+
+
+        if (
+            cleanMessage.length > 500
+        ) {
+
+            return;
+
+        }
+
+
+        io.to(roomId).emit(
             "chat message",
-            (message) => {
+            {
 
+                sender:
+                    socket.id,
 
-                const roomId =
-                    activeRooms.get(
-                        socket.id
-                    );
+                message:
+                    cleanMessage,
 
-
-                if (!roomId) {
-
-                    return;
-
-                }
-
-
-                if (
-                    typeof message !==
-                    "string"
-                ) {
-
-                    return;
-
-                }
-
-
-                const cleanMessage =
-                    message.trim();
-
-
-                if (
-                    !cleanMessage
-                ) {
-
-                    return;
-
-                }
-
-
-                if (
-                    cleanMessage.length >
-                    500
-                ) {
-
-                    return;
-
-                }
-
-
-                io.to(
-                    roomId
-                ).emit(
-                    "chat message",
-                    {
-
-                        sender:
-                            socket.id,
-
-                        message:
-                            cleanMessage,
-
-                        createdAt:
-                            new Date()
-
-                    }
-                );
-
+                createdAt:
+                    new Date()
 
             }
         );
+
+    }
+);
+
+
 
 
         /* ==========================
@@ -1568,7 +1706,6 @@ io.on(
             }
         );
 
-
         /* ==========================
            DISCONNECT
         ========================== */
@@ -1577,38 +1714,31 @@ io.on(
             "disconnect",
             () => {
 
-
                 console.log(
                     "User disconnected:",
                     strangerName
                 );
 
-
                 waitingUsers.delete(
                     socket.id
                 );
-
 
                 leaveCurrentRoom(
                     socket,
                     true
                 );
 
-
                 userNames.delete(
                     socket.id
                 );
-
 
                 socketUsers.delete(
                     socket.id
                 );
 
-
                 socketInterests.delete(
                     socket.id
                 );
-
 
                 blockedUsers.delete(
                     socket.id
@@ -1617,9 +1747,9 @@ io.on(
             }
         );
 
+    }   // CLOSE io.on("connection")
 
-    }
-);
+);      // CLOSE io.on()
 
 
 /* ==============================
@@ -1631,72 +1761,44 @@ function leaveCurrentRoom(
     disconnected = false
 ) {
 
-
     const roomId =
         activeRooms.get(
             socket.id
         );
 
-
     if (!roomId) {
-
         return;
-
     }
 
-
     const room =
-        io.sockets.adapter
-            .rooms.get(
-                roomId
-            );
-
+        io.sockets.adapter.rooms.get(
+            roomId
+        );
 
     if (room) {
 
-        for (
-            const id of room
-        ) {
+        for (const id of room) {
 
-            if (
-                id !== socket.id
-            ) {
-
+            if (id !== socket.id) {
 
                 io.to(id).emit(
                     "stranger disconnected"
                 );
 
-
-                activeRooms.delete(
-                    id
-                );
-
+                activeRooms.delete(id);
             }
-
         }
-
     }
-
 
     activeRooms.delete(
         socket.id
     );
 
-
     socket.leave(
         roomId
     );
 
-
-    if (
-        !disconnected
-    ) {
-
-        /*
-         * Put user back into
-         * waiting queue.
-         */
+    if (!disconnected) {
 
         waitingUsers.set(
             socket.id,
@@ -1716,38 +1818,36 @@ async function startServer() {
 
     try {
 
-
         await client.connect();
-
 
         console.log(
             "MongoDB Atlas connected successfully!"
         );
-
 
         const database =
             client.db(
                 "avinash_match_aura"
             );
 
-
         usersCollection =
             database.collection(
                 "users"
             );
 
+        const PORT =
+            process.env.PORT || 3000;
 
         server.listen(
-    process.env.PORT || 3000,
-    "0.0.0.0",
-    () => {
+            PORT,
+            "0.0.0.0",
+            () => {
 
-        console.log(
-            `Avinash Match Aura running on port ${process.env.PORT || 3000}`
+                console.log(
+                    `Avinash Match Aura running on port ${PORT}`
+                );
+
+            }
         );
-
-    }
-);
 
     }
 
