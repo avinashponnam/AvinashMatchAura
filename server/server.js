@@ -31,6 +31,7 @@ const MONGODB_URI =
 const client =
     new MongoClient(MONGODB_URI);
 
+let chatMessagesCollection;
 let usersCollection;
 
 
@@ -1454,63 +1455,213 @@ console.log(
             }
         );
 
+        /* ==========================
+   LOAD CHAT HISTORY
+========================== */
 
-/* ==========================
+socket.on(
+    "load chat history",
+    async (otherUsername) => {
+
+        try {
+
+            const currentUsername =
+                socketUsers.get(
+                    socket.id
+                );
+
+
+            if (
+                !currentUsername ||
+                !otherUsername
+            ) {
+
+                return;
+            }
+
+
+            const messages =
+                await chatMessagesCollection
+                    .find({
+
+                        $or: [
+
+                            {
+                                sender:
+                                    currentUsername,
+
+                                receiver:
+                                    otherUsername
+                            },
+
+                            {
+                                sender:
+                                    otherUsername,
+
+                                receiver:
+                                    currentUsername
+                            }
+
+                        ]
+
+                    })
+                    .sort({
+                        createdAt: 1
+                    })
+                    .toArray();
+
+
+            socket.emit(
+                "chat history",
+                messages.map(
+                    message => ({
+
+                        username:
+                            message.sender,
+
+                        message:
+                            message.message,
+
+                        createdAt:
+                            message.createdAt
+
+                    })
+                )
+            );
+
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Chat history error:",
+                error
+            );
+
+        }
+
+    }
+);
+
+        /* ==========================
    CHAT MESSAGE
 ========================== */
 
 socket.on(
     "chat message",
-    (message) => {
+    async (message) => {
 
-        const roomId =
-            activeRooms.get(
-                socket.id
-            );
+        try {
 
+            const roomId =
+                activeRooms.get(
+                    socket.id
+                );
 
-        if (!roomId) {
+            if (!roomId) {
+                return;
+            }
 
-            return;
+            if (
+                typeof message !==
+                "string"
+            ) {
+                return;
+            }
 
-        }
+            const cleanMessage =
+                message.trim();
 
+            if (!cleanMessage) {
+                return;
+            }
 
-        if (
-            typeof message !== "string"
-        ) {
-
-            return;
-
-        }
-
-
-        const cleanMessage =
-            message.trim();
-
-
-        if (!cleanMessage) {
-
-            return;
-
-        }
-
-
-        if (
-            cleanMessage.length > 500
-        ) {
-
-            return;
-
-        }
+            if (
+                cleanMessage.length >
+                500
+            ) {
+                return;
+            }
 
 
-        io.to(roomId).emit(
-            "chat message",
-            {
+            /* ==========================
+               GET CURRENT USER
+            ========================== */
+
+            const senderUsername =
+                socketUsers.get(
+                    socket.id
+                );
+
+            if (!senderUsername) {
+
+                console.log(
+                    "Cannot save message: username missing"
+                );
+
+                return;
+            }
+
+
+            /* ==========================
+               GET OTHER USER
+            ========================== */
+
+            const room =
+                io.sockets.adapter.rooms.get(
+                    roomId
+                );
+
+            if (!room) {
+                return;
+            }
+
+
+            let receiverUsername =
+                null;
+
+
+            for (
+                const socketId of room
+            ) {
+
+                if (
+                    socketId !==
+                    socket.id
+                ) {
+
+                    receiverUsername =
+                        socketUsers.get(
+                            socketId
+                        );
+
+                    break;
+                }
+            }
+
+
+            if (!receiverUsername) {
+
+                console.log(
+                    "Cannot save message: receiver username missing"
+                );
+
+                return;
+            }
+
+
+            /* ==========================
+               SAVE MESSAGE
+            ========================== */
+
+            const chatMessage = {
 
                 sender:
-                    socket.id,
+                    senderUsername,
+
+                receiver:
+                    receiverUsername,
 
                 message:
                     cleanMessage,
@@ -1518,297 +1669,54 @@ socket.on(
                 createdAt:
                     new Date()
 
-            }
-        );
+            };
+
+
+            await chatMessagesCollection.insertOne(
+                chatMessage
+            );
+
+
+            /* ==========================
+               SEND LIVE MESSAGE
+            ========================== */
+
+            io.to(
+                roomId
+            ).emit(
+                "chat message",
+                {
+
+                    sender:
+                        socket.id,
+
+                    username:
+                        senderUsername,
+
+                    message:
+                        cleanMessage,
+
+                    createdAt:
+                        chatMessage.createdAt
+
+                }
+            );
+
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Chat message error:",
+                error
+            );
+
+        }
 
     }
 );
-
-
-
-
-        /* ==========================
-           TYPING INDICATOR
-        ========================== */
-
-        socket.on(
-            "typing",
-            (isTyping) => {
-
-                const roomId =
-                    activeRooms.get(
-                        socket.id
-                    );
-
-
-                if (!roomId) {
-
-                    return;
-
-                }
-
-
-                socket.to(
-                    roomId
-                ).emit(
-                    "stranger typing",
-                    Boolean(isTyping)
-                );
-
-            }
-        );
-
-
-        /* ==========================
-           NEXT STRANGER
-        ========================== */
-
-        socket.on(
-            "next stranger",
-            () => {
-
-
-                leaveCurrentRoom(
-                    socket
-                );
-
-
-                setTimeout(
-                    () => {
-
-                        if (
-                            socket.connected
-                        ) {
-
-                            socket.emit(
-                                "waiting"
-                            );
-
-                        }
-
-                    },
-                    100
-                );
-
-            }
-        );
-
-
-        /* ==========================
-           BLOCK STRANGER
-        ========================== */
-
-        socket.on(
-            "block stranger",
-            () => {
-
-
-                const roomId =
-                    activeRooms.get(
-                        socket.id
-                    );
-
-
-                if (!roomId) {
-
-                    return;
-
-                }
-
-
-                const room =
-                    io.sockets.adapter
-                        .rooms.get(
-                            roomId
-                        );
-
-
-                if (room) {
-
-                    for (
-                        const id of room
-                    ) {
-
-                        if (
-                            id !== socket.id
-                        ) {
-
-
-                            /*
-                             * Remember block.
-                             */
-
-                            if (
-                                !blockedUsers.has(
-                                    socket.id
-                                )
-                            ) {
-
-                                blockedUsers.set(
-                                    socket.id,
-                                    new Set()
-                                );
-
-                            }
-
-
-                            blockedUsers
-                                .get(
-                                    socket.id
-                                )
-                                .add(id);
-
-
-                            io.to(id).emit(
-                                "blocked by stranger"
-                            );
-
-                        }
-
-                    }
-
-                }
-
-
-                socket.emit(
-                    "block successful"
-                );
-
-
-                leaveCurrentRoom(
-                    socket
-                );
-
-            }
-        );
-
-
-        /* ==========================
-           REPORT STRANGER
-        ========================== */
-
-        socket.on(
-            "report stranger",
-            (reason) => {
-
-
-                console.log(
-                    "Report from:",
-                    strangerName,
-                    reason
-                );
-
-
-                socket.emit(
-                    "report successful"
-                );
-
-            }
-        );
-
-        /* ==========================
-           DISCONNECT
-        ========================== */
-
-        socket.on(
-            "disconnect",
-            () => {
-
-                console.log(
-                    "User disconnected:",
-                    strangerName
-                );
-
-                waitingUsers.delete(
-                    socket.id
-                );
-
-                leaveCurrentRoom(
-                    socket,
-                    true
-                );
-
-                userNames.delete(
-                    socket.id
-                );
-
-                socketUsers.delete(
-                    socket.id
-                );
-
-                socketInterests.delete(
-                    socket.id
-                );
-
-                blockedUsers.delete(
-                    socket.id
-                );
-
-            }
-        );
-
-    }   // CLOSE io.on("connection")
-
-);      // CLOSE io.on()
-
-
-/* ==============================
-   LEAVE CURRENT ROOM
-================================ */
-
-function leaveCurrentRoom(
-    socket,
-    disconnected = false
-) {
-
-    const roomId =
-        activeRooms.get(
-            socket.id
-        );
-
-    if (!roomId) {
-        return;
-    }
-
-    const room =
-        io.sockets.adapter.rooms.get(
-            roomId
-        );
-
-    if (room) {
-
-        for (const id of room) {
-
-            if (id !== socket.id) {
-
-                io.to(id).emit(
-                    "stranger disconnected"
-                );
-
-                activeRooms.delete(id);
-            }
-        }
-    }
-
-    activeRooms.delete(
-        socket.id
-    );
-
-    socket.leave(
-        roomId
-    );
-
-    if (!disconnected) {
-
-        waitingUsers.set(
-            socket.id,
-            true
-        );
-
-    }
-
-}
-
+});
 
 /* ==============================
    START SERVER
@@ -1833,6 +1741,14 @@ async function startServer() {
             database.collection(
                 "users"
             );
+        chatMessagesCollection =
+    database.collection(
+        "chatMessages"
+    );
+
+console.log(
+    "Chat messages collection ready."
+);
 
         const PORT =
             process.env.PORT || 3000;
