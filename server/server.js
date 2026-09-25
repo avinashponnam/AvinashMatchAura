@@ -967,6 +967,38 @@ io.on(
             async () => {
 
                 try {
+                    console.log(
+                "================================="
+            );
+
+            console.log(
+                "FIND STRANGER CALLED"
+            );
+
+            console.log(
+                "CURRENT SOCKET:",
+                socket.id
+            );
+
+            console.log(
+                "CURRENT USERNAME:",
+                socketUsers.get(socket.id)
+            );
+
+            console.log(
+                "WAITING USERS:",
+                [...waitingUsers]
+            );
+
+            console.log(
+                "WAITING COUNT:",
+                waitingUsers.size
+            );
+
+            console.log(
+                "================================="
+            );
+
 
                     if (
                         waitingUsers.has(
@@ -1043,6 +1075,15 @@ io.on(
                                 socket.id,
                                 waitingId
                             );
+
+                        console.log(
+    "CHECKING MATCH:",
+    socket.id,
+    "<->",
+    waitingId,
+    "SCORE:",
+    score
+);
 
 
                         if (
