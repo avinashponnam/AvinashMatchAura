@@ -1758,6 +1758,240 @@ socket.on(
     }
 );
 });
+/* ==========================
+   BLOCK STRANGER
+========================== */
+
+socket.on(
+    "block stranger",
+    async () => {
+
+        try {
+
+            const roomId =
+                activeRooms.get(
+                    socket.id
+                );
+
+            if (!roomId) {
+                return;
+            }
+
+            const room =
+                io.sockets.adapter.rooms.get(
+                    roomId
+                );
+
+            if (!room) {
+                return;
+            }
+
+            let strangerSocketId = null;
+
+            for (
+                const socketId of room
+            ) {
+
+                if (
+                    socketId !== socket.id
+                ) {
+
+                    strangerSocketId =
+                        socketId;
+
+                    break;
+                }
+
+            }
+
+            if (!strangerSocketId) {
+                return;
+            }
+
+            activeRooms.delete(
+                socket.id
+            );
+
+            activeRooms.delete(
+                strangerSocketId
+            );
+
+            socket.leave(
+                roomId
+            );
+
+            const strangerSocket =
+                io.sockets.sockets.get(
+                    strangerSocketId
+                );
+
+            if (strangerSocket) {
+
+                strangerSocket.leave(
+                    roomId
+                );
+
+            }
+
+            socket.emit(
+                "block successful"
+            );
+
+            if (strangerSocket) {
+
+                strangerSocket.emit(
+                    "blocked by stranger"
+                );
+
+            }
+
+            console.log(
+                "User blocked:",
+                socketUsers.get(
+                    socket.id
+                ),
+                "blocked",
+                socketUsers.get(
+                    strangerSocketId
+                )
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Block error:",
+                error
+            );
+
+        }
+
+    }
+);
+
+/* ==========================
+   REPORT STRANGER
+========================== */
+
+socket.on(
+    "report stranger",
+    async (reason) => {
+
+        try {
+
+            const reporter =
+                socketUsers.get(
+                    socket.id
+                );
+
+            if (!reporter) {
+                return;
+            }
+
+            const roomId =
+                activeRooms.get(
+                    socket.id
+                );
+
+            let reportedUser =
+                "Unknown";
+
+
+            if (roomId) {
+
+                const room =
+                    io.sockets.adapter.rooms.get(
+                        roomId
+                    );
+
+                if (room) {
+
+                    for (
+                        const socketId of room
+                    ) {
+
+                        if (
+                            socketId !==
+                            socket.id
+                        ) {
+
+                            reportedUser =
+                                socketUsers.get(
+                                    socketId
+                                ) ||
+                                "Unknown";
+
+                            break;
+                        }
+
+                    }
+
+                }
+
+            }
+
+
+            const cleanReason =
+                typeof reason === "string"
+                    ? reason.trim().slice(0, 500)
+                    : "No reason provided";
+
+
+            console.log(
+                "REPORT:",
+                {
+                    reporter,
+                    reportedUser,
+                    reason: cleanReason
+                }
+            );
+
+
+            const reportsCollection =
+                client
+                    .db(
+                        "avinash_match_aura"
+                    )
+                    .collection(
+                        "reports"
+                    );
+
+
+            await reportsCollection.insertOne({
+
+                reporter:
+                    reporter,
+
+                reportedUser:
+                    reportedUser,
+
+                reason:
+                    cleanReason,
+
+                createdAt:
+                    new Date()
+
+            });
+
+
+            socket.emit(
+                "report successful"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Report error:",
+                error
+            );
+
+        }
+
+    }
+);
 
 /* ==============================
    START SERVER
