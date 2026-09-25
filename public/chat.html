@@ -1482,6 +1482,10 @@ function addProfileTag(
    SOCKET CONNECT
 ================================= */
 
+/* =================================
+   SOCKET CONNECT
+================================= */
+
 socket.on(
     "connect",
     function() {
@@ -1489,6 +1493,51 @@ socket.on(
         console.log(
             "Socket connected:",
             socket.id
+        );
+
+        const username =
+            localStorage.getItem("username");
+
+        console.log(
+            "Logged-in username:",
+            username
+        );
+
+
+        if (!username) {
+
+            console.error(
+                "Username not found in localStorage."
+            );
+
+            systemMessage(
+                "⚠️ Please login again."
+            );
+
+            return;
+        }
+
+
+        socket.emit(
+            "identify user",
+            username
+        );
+
+    }
+);
+
+
+/* =================================
+   USER IDENTIFIED
+================================= */
+
+socket.on(
+    "identified",
+    function(data) {
+
+        console.log(
+            "User identified:",
+            data
         );
 
         findStranger();
