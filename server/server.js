@@ -1625,140 +1625,7 @@ socket.on(
                 return;
             }
 
-
             /* ==========================
-               GET CURRENT USER
-            ========================== */
-
-            const senderUsername =
-                socketUsers.get(
-                    socket.id
-                );
-
-            if (!senderUsername) {
-
-                console.log(
-                    "Cannot save message: username missing"
-                );
-
-                return;
-            }
-
-
-            /* ==========================
-               GET OTHER USER
-            ========================== */
-
-            const room =
-                io.sockets.adapter.rooms.get(
-                    roomId
-                );
-
-            if (!room) {
-                return;
-            }
-
-
-            let receiverUsername =
-                null;
-
-
-            for (
-                const socketId of room
-            ) {
-
-                if (
-                    socketId !==
-                    socket.id
-                ) {
-
-                    receiverUsername =
-                        socketUsers.get(
-                            socketId
-                        );
-
-                    break;
-                }
-            }
-
-
-            if (!receiverUsername) {
-
-                console.log(
-                    "Cannot save message: receiver username missing"
-                );
-
-                return;
-            }
-
-
-            /* ==========================
-               SAVE MESSAGE
-            ========================== */
-
-            const chatMessage = {
-
-                sender:
-                    senderUsername,
-
-                receiver:
-                    receiverUsername,
-
-                message:
-                    cleanMessage,
-
-                createdAt:
-                    new Date()
-
-            };
-
-
-            await chatMessagesCollection.insertOne(
-                chatMessage
-            );
-
-
-            /* ==========================
-               SEND LIVE MESSAGE
-            ========================== */
-
-            io.to(
-                roomId
-            ).emit(
-                "chat message",
-                {
-
-                    sender:
-                        socket.id,
-
-                    username:
-                        senderUsername,
-
-                    message:
-                        cleanMessage,
-
-                    createdAt:
-                        chatMessage.createdAt
-
-                }
-            );
-
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "Chat message error:",
-                error
-            );
-
-        }
-
-    }
-);
-});
-/* ==========================
    BLOCK STRANGER
 ========================== */
 
@@ -1992,6 +1859,140 @@ socket.on(
 
     }
 );
+
+
+            /* ==========================
+               GET CURRENT USER
+            ========================== */
+
+            const senderUsername =
+                socketUsers.get(
+                    socket.id
+                );
+
+            if (!senderUsername) {
+
+                console.log(
+                    "Cannot save message: username missing"
+                );
+
+                return;
+            }
+
+
+            /* ==========================
+               GET OTHER USER
+            ========================== */
+
+            const room =
+                io.sockets.adapter.rooms.get(
+                    roomId
+                );
+
+            if (!room) {
+                return;
+            }
+
+
+            let receiverUsername =
+                null;
+
+
+            for (
+                const socketId of room
+            ) {
+
+                if (
+                    socketId !==
+                    socket.id
+                ) {
+
+                    receiverUsername =
+                        socketUsers.get(
+                            socketId
+                        );
+
+                    break;
+                }
+            }
+
+
+            if (!receiverUsername) {
+
+                console.log(
+                    "Cannot save message: receiver username missing"
+                );
+
+                return;
+            }
+
+
+            /* ==========================
+               SAVE MESSAGE
+            ========================== */
+
+            const chatMessage = {
+
+                sender:
+                    senderUsername,
+
+                receiver:
+                    receiverUsername,
+
+                message:
+                    cleanMessage,
+
+                createdAt:
+                    new Date()
+
+            };
+
+
+            await chatMessagesCollection.insertOne(
+                chatMessage
+            );
+
+
+            /* ==========================
+               SEND LIVE MESSAGE
+            ========================== */
+
+            io.to(
+                roomId
+            ).emit(
+                "chat message",
+                {
+
+                    sender:
+                        socket.id,
+
+                    username:
+                        senderUsername,
+
+                    message:
+                        cleanMessage,
+
+                    createdAt:
+                        chatMessage.createdAt
+
+                }
+            );
+
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Chat message error:",
+                error
+            );
+
+        }
+
+    }
+);
+});
 
 /* ==============================
    START SERVER
